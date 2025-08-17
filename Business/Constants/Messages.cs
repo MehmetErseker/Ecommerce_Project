@@ -1,0 +1,46 @@
+﻿using Entities.Concrete;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Business.Constants
+{
+    public static class Messages
+    {
+        public static string ProductAdded = "Ürün eklendi";
+        public static string CategoryAdded = "Kategori eklendi";
+        public static string UserAdded = "Kullanıcı eklendi";
+        public static string AddressAdded = "Adres eklendi";
+        public static string ProductNameInvalid = "Ürün ismi geçersiz";
+        public static string MaintenanceTime = "Bu saatte işlem geçersiz";
+        public static string ProductsListed = "Ürünler listelendi";
+        public static string CategoriesListed = "Kategoriler listelendi";
+        public static string UsersListed = "Kullanıcılar listelendi";
+        public static string UserHardDeleted = "Kullanıcı tamamen silindi";
+        public static string AllUsersListed = "Bütün Kullanıcılar listelendi (silinmişler dahil)";
+        public static string ProductDeleted = "Ürün silindi";
+        public static string CategoryDeleted = "Kategori silindi";
+        public static string AddressDeleted = "Adres silindi";
+        public static string UserDeleted = "Kullanıcı silindi";
+        public static string ProductUpdated = "Ürün güncellendi";
+        public static string CategoryUpdated = "Kategori güncellendi";
+        public static string UserUpdated = "Kullanıcı güncellendi";
+        public static string AddressUpdated = "Adres güncellendi";
+        public static string UserNotFound = "Kullanıcı bulunamadı";
+        public static string AddressesListed = "Adresler listelendi";
+        public static string ProductNotFound = "Ürün bulunamadı";
+        public static string CategoryNotFound = "Kategori bulunamadı";
+        public static string AddressNotFound = "Adres bulunamadı";
+        public static string CartNotFound = "Sepet bulunamadı";
+        public static string CartListed = "Sepet listelendi";
+        public static string ItemAddedToCart = "Ürün sepete eklendi";
+        public static string ItemRemovedFromCart= "Ürün sepetten kaldırıldı";
+        public static string ItemNotFoundInCart= "Ürün sepet içinde bulunamadı";
+        public static string CartFound = "Sepet bulundu";
+        public static string CartCreated= "Sepet oluşturuldu";
+        public static string CartDeleted = "Sepet silindi";
+        public static string CartsListed = "Sepetler listelendi";
+    }
+}
