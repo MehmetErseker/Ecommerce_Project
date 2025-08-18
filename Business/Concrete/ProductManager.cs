@@ -26,10 +26,6 @@ namespace Business.Concrete
         [ValidationAspect(typeof(ProductValidator))]
         public async Task<IResult> Add(Product product)
         {
-            //validation
-            //business codes
-
-            //ValidationTool.Validate(new ProductValidator(), product);
 
             await _productDal.Add(product);
             return new SuccessResult(Messages.ProductAdded);
@@ -49,10 +45,7 @@ namespace Business.Concrete
 
         public async Task<IDataResult<List<Product>>> GetAll()
         {
-            //if (DateTime.Now.Hour == 23)
-            //{
-            //    return new ErrorDataResult <List<Product>>(Messages.MaintenanceTime);
-            //}
+
             return new SuccessDataResult<List<Product>>(await _productDal.GetAll(), Messages.ProductsListed);
         }
 

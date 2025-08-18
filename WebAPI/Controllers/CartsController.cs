@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getcartitems/{cartId}")]
+        [HttpGet("getbyid/{cartId}")]
         public async Task<IActionResult> GetCartById(int cartId)
         {
             var result = await _cartService.GetCartById(cartId);
@@ -37,9 +38,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> CreateCart(int userId)
+        public async Task<IActionResult> CreateCart(Cart cart)
         {
-            var result = await _cartService.CreateCart(userId);
+            var result = await _cartService.CreateCart(cart);
             if (result.Success)
             {
                 return Ok(result);
@@ -47,7 +48,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpPost("addtocart/{cartId}/{productId}/{quantity}")]
+        [HttpPost("addtocart")]
         public async Task<IActionResult> AddToCart(int cartId, int productId, int quantity)
         {
             var result = await _cartService.AddToCart(cartId, productId, quantity);
@@ -58,7 +59,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpDelete("removefromcart/{cartId}/{productId}")]
+        [HttpDelete("removefromcart")]
         public async Task<IActionResult> RemoveFromCart(int cartId, int productId)
         {
             var result = await _cartService.RemoveFromCart(cartId, productId);

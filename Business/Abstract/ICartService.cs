@@ -9,7 +9,7 @@ namespace Business.Abstract
         Task<IDataResult<List<Cart>>> GetAll();
         Task<IResult> AddToCart(int cartId, int productId, int quantity);
         Task<IResult> RemoveFromCart(int cartId, int productId);
-        Task<IResult> CreateCart(int userId);
+        Task<IResult> CreateCart(Cart cart);
         Task<IResult> DeleteCart(int cartId);
     }
 }

@@ -15,10 +15,14 @@ namespace Business.Concrete
     public class CartManager : ICartService
     {
         ICartDal _cartDal;
-        public CartManager(ICartDal cartDal)
+        ICartItemDal _cartItemDal;
+
+        public CartManager(ICartDal cartDal, ICartItemDal cartItemDal)
         {
             _cartDal = cartDal;
+            _cartItemDal = cartItemDal;
         }
+
 
         public async Task<IResult> AddToCart(int cartId, int productId, int quantity)
         {
@@ -27,18 +31,29 @@ namespace Business.Concrete
             {
                 return new ErrorResult(Messages.CartNotFound);
             }
-            var existingItem = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+           
+            var existingItem = await _cartItemDal.Get(ci => ci.CartId == cartId && ci.ProductId == productId);
+
             if (existingItem != null)
             {
                 existingItem.Quantity += quantity;
+                await _cartItemDal.Update(existingItem);
             }
             else
             {
-                cart.CartItems.Add(new CartItem { ProductId = productId, Quantity = quantity });
+                var newItem = new CartItem
+                {
+                    ProductId = productId,
+                    Quantity = quantity,
+                    CartId = cartId
+                };
+                await _cartItemDal.Add(newItem);
             }
-            await _cartDal.Update(cart);
+
             return new SuccessResult(Messages.ItemAddedToCart);
         }
+
 
         public async Task<IDataResult<Cart>> GetCartById(int cartId)
         {
@@ -50,10 +65,10 @@ namespace Business.Concrete
             return new SuccessDataResult<Cart>(cart, Messages.CartListed);
         }
 
-        public async Task<IResult> CreateCart(int userId)
+    
+        public async Task<IResult> CreateCart(Cart cart)
         {
-            var newCart = new Cart { UserId = userId, CartItems = new List<CartItem>() };
-            await _cartDal.Add(newCart);
+            await _cartDal.Add(cart);
             return new SuccessResult(Messages.CartCreated);
         }
 
@@ -64,15 +79,17 @@ namespace Business.Concrete
             {
                 return new ErrorResult(Messages.CartNotFound);
             }
-            var itemToRemove = cart.CartItems.FirstOrDefault(ci => ci.ProductId == productId);
+
+            var itemToRemove = await _cartItemDal.Get(ci => ci.CartId == cartId && ci.ProductId == productId);
             if (itemToRemove != null)
             {
-                cart.CartItems.Remove(itemToRemove);
-                await _cartDal.Update(cart);
+                await _cartItemDal.Delete(itemToRemove);
                 return new SuccessResult(Messages.ItemRemovedFromCart);
             }
+
             return new ErrorResult(Messages.ItemNotFoundInCart);
         }
+
 
         public async Task<IResult> DeleteCart(int cartId)
         {
@@ -83,7 +100,7 @@ namespace Business.Concrete
 
         public async Task<IDataResult<List<Cart>>> GetAll()
         {
-            return new SuccessDataResult<List<Cart>>(await _cartDal.GetAll(), Messages.CartsListed);
+            return new SuccessDataResult<List<Cart>>(await _cartDal.GetAllWithItems(), Messages.CartsListed);
         }
     }
 }

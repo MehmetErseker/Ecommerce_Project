@@ -28,6 +28,7 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<EfAddressDal>().As<IAddressDal>().SingleInstance();
             builder.RegisterType<CartManager>().As<ICartService>().SingleInstance();
             builder.RegisterType<EfCartDal>().As<ICartDal>().SingleInstance();
+            builder.RegisterType<EfCartItemDal>().As<ICartItemDal>().SingleInstance();
 
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();

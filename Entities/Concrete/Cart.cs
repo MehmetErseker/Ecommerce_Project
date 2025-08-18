@@ -6,7 +6,7 @@ namespace Entities.Concrete
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public List<CartItem> CartItems { get; set; }
+        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
         public decimal TotalPrice { get; set; }
     }
 }

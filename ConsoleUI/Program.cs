@@ -1,20 +1,20 @@
-﻿//using Business.Concrete;
-//using DataAccess.Concrete.EntityFramework;
-//using DataAccess.Concrete.InMemory;
-//using Entities.Concrete;
-//using System;
+﻿using Business.Concrete;
+using DataAccess.Concrete.EntityFramework;
+using Entities.Concrete;
+using System;
 
-//namespace ConsoleUI
-//{
-//    class Program
-//    {
-//        static void Main(string[] args)
-//        {
-//            //ProductTest();
-//            //CategoryTest();
+namespace ConsoleUI
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            //ProductTest();
+            //CategoryTest();
 
-//        }
-
+        }
+    }
+}
 //        //private static void CategoryTest()
 //        //{
 //        //    CategoryManager categoryManager = new CategoryManager(new EfCategoryDal());
