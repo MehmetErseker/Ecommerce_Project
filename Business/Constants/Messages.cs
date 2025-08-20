@@ -1,4 +1,5 @@
-﻿using Entities.Concrete;
+﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,5 +43,13 @@ namespace Business.Constants
         public static string CartCreated= "Sepet oluşturuldu";
         public static string CartDeleted = "Sepet silindi";
         public static string CartsListed = "Sepetler listelendi";
+        public static string AuthorizationDenied = "Yetkiniz yok";
+        public static string UserRegistered= "Kullanıcı kaydedildi";
+        public static string PasswordError = "Hatalı şifre";
+        public static string SuccessfulLogin = "Giriş Başarılı";
+        public static string UserAlreadyExists= "Kullanıcı zaten mevcut";
+        public static string AccessTokenCreated = "Erişim jetonu oluşturuldu";
+        public static string NoClaimsFound = "Hiç bir yetki bulunamadı";
+        public static string ClaimsListed = "Yetkiler listelendi";
     }
 }

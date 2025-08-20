@@ -1,4 +1,5 @@
 ﻿using Core.DataAccess;
+using Core.Entities.Concrete;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace DataAccess.Abstract
 {
     public interface IUserDal: IEntityRepository<User>
     {
-        Task<List<User>> GetAllWithAddresses(Expression<Func<User, bool>> filter = null);
+        List<OperationClaim> GetClaims(User user);
+        User GetByMail(string email);
     }
 }

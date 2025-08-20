@@ -1,4 +1,5 @@
-﻿using Core.Utilities.Results;
+﻿using Core.Entities.Concrete;
+using Core.Utilities.Results;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -16,5 +17,7 @@ namespace Business.Abstract
         Task<IResult> Update(User user);
         Task<IResult> Delete(int UserId); //soft delete
         Task<IResult> HardDelete(int UserId);
+        List<OperationClaim> GetClaims(User user);
+        IDataResult<User> GetByMail(string email);
     }
 }

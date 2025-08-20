@@ -16,6 +16,7 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 // Controller ve Swagger kayýtlarý
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMemoryCache();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

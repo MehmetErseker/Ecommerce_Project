@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -40,15 +41,25 @@ namespace Business.Concrete
         // exclude deleted users
         public async Task<IDataResult<List<User>>> GetAll()
         {
-            var data = await _userDal.GetAllWithAddresses(p => !p.isDeleted);
+            var data = await _userDal.GetAll(p => !p.isDeleted);
             return new SuccessDataResult<List<User>>(data, Messages.UsersListed);
         }
 
         public async Task<IDataResult<List<User>>> GetAllUsers()
         {
-            var data = await _userDal.GetAllWithAddresses();
+            var data = await _userDal.GetAll();
             return new SuccessDataResult<List<User>>(data, Messages.AllUsersListed);
         }
+
+        //public async Task<IDataResult<List<OperationClaim>>> GetClaims(User user)
+        //{
+        //    var claims = await _userDal.GetClaims(user);
+        //    if (claims == null || claims.Count == 0)
+        //    {
+        //        return new ErrorDataResult<List<OperationClaim>>(Messages.NoClaimsFound);
+        //    }
+        //    return new SuccessDataResult<List<OperationClaim>>(claims, Messages.ClaimsListed);
+        //}
 
         public async Task<IResult> HardDelete(int UserId)
         {
@@ -66,6 +77,17 @@ namespace Business.Concrete
         {
             await _userDal.Update(user);
             return new SuccessResult(Messages.UserUpdated);
+        }
+
+        public IDataResult<User> GetByMail(string email)
+        {
+            var user = _userDal.GetByMail(email);
+            return new SuccessDataResult<User>(user);
+        }
+
+        public List<OperationClaim> GetClaims(User user)
+        {
+            return _userDal.GetClaims(user);
         }
     }
 }
