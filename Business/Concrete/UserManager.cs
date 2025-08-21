@@ -79,13 +79,13 @@ namespace Business.Concrete
             return new SuccessResult(Messages.UserUpdated);
         }
 
-        public IDataResult<User> GetByMail(string email)
+        public async Task<IDataResult<User>> GetByMail(string email)
         {
             var user = _userDal.GetByMail(email);
             return new SuccessDataResult<User>(user);
         }
 
-        public List<OperationClaim> GetClaims(User user)
+        public async Task<List<OperationClaim>> GetClaims(User user)
         {
             return _userDal.GetClaims(user);
         }

@@ -17,7 +17,7 @@ namespace Business.Abstract
         Task<IResult> Update(User user);
         Task<IResult> Delete(int UserId); //soft delete
         Task<IResult> HardDelete(int UserId);
-        List<OperationClaim> GetClaims(User user);
-        IDataResult<User> GetByMail(string email);
+        Task<List<OperationClaim>> GetClaims(User user);
+        Task<IDataResult<User>> GetByMail(string email);
     }
 }
