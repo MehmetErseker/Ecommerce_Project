@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Concrete;
+using Core.Utilities.Security.JWT;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
@@ -51,5 +52,8 @@ namespace Business.Constants
         public static string AccessTokenCreated = "Erişim jetonu oluşturuldu";
         public static string NoClaimsFound = "Hiç bir yetki bulunamadı";
         public static string ClaimsListed = "Yetkiler listelendi";
+
+        public static string OtpSent { get; internal set; }
+        public static AccessToken OtpInvalid { get; internal set; }
     }
 }

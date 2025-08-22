@@ -2,6 +2,7 @@
 using Core.Utilities.Security.JWT;
 using Entities.Concrete;
 using Entities.Dtos;
+using Entities.DTOs;
 
 public interface IAuthService
 {
@@ -9,4 +10,6 @@ public interface IAuthService
     Task<IDataResult<User>> Login(UserForLoginDto userForLoginDto);
     Task<IResult> UserExists(string email);
     Task<IDataResult<AccessToken>> CreateAccessToken(User user);
+    Task<IDataResult<OtpTicket>> InitiateLogin(UserForLoginDto userForLoginDto);
+    Task<IDataResult<AccessToken>> VerifyOtpAndCreateToken(OtpVerifyDto dto);
 }

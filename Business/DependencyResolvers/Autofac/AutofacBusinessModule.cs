@@ -5,6 +5,7 @@ using Business.Concrete;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
 using Core.Utilities.Security.JWT;
+using Core.Utilities.Security.OTP;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using System;
@@ -33,7 +34,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<AuthManager>().As<IAuthService>().SingleInstance();
             builder.RegisterType<UserManager>().As<IUserService>().SingleInstance();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>().SingleInstance();
-
+            builder.RegisterType<OtpService>().As<IOtpService>().SingleInstance();
+            builder.RegisterType<MemoryOtpStore>().As<IOtpStore>().SingleInstance();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
 
