@@ -1,8 +1,11 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,16 +15,20 @@ namespace Business.Concrete
     public class AddressManager : IAddressService
     {
         private readonly IAddressDal _addressDal;
+        private readonly IMapper _mapper;
 
-        public AddressManager(IAddressDal addressDal)
+        public AddressManager(IAddressDal addressDal, IMapper mapper)
         {
             _addressDal = addressDal;
+            _mapper = mapper;
         }
 
-        public async Task<IResult> Add(Address address)
+        public async Task<IResult> Add(AddressDto addressDto)
         {
-            await _addressDal.Add(address);
+            var addressEntity = _mapper.Map<Address>(addressDto);
+            await _addressDal.Add(addressEntity);
             return new SuccessResult(Messages.AddressAdded);
+
         }
 
         public async Task<IResult> Delete(int addressId)
@@ -36,10 +43,12 @@ namespace Business.Concrete
             return new SuccessResult(Messages.AddressDeleted);
         }
 
-        public async Task<IDataResult<List<Address>>> GetAll()
+        public async Task<IDataResult<List<AddressDto>>> GetAll()
         {
-            var data = await _addressDal.GetAll();
-            return new SuccessDataResult<List<Address>>(data, Messages.AddressesListed);
+            var AddressEntity = await _addressDal.GetAll();
+            var AddressDto = _mapper.Map<List<AddressDto>>(AddressEntity);
+            return new SuccessDataResult<List<AddressDto>>(AddressDto, Messages.AddressesListed);
+
         }
 
         public async Task<IResult> Update(Address address)

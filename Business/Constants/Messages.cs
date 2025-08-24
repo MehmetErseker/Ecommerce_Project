@@ -52,8 +52,7 @@ namespace Business.Constants
         public static string AccessTokenCreated = "Erişim jetonu oluşturuldu";
         public static string NoClaimsFound = "Hiç bir yetki bulunamadı";
         public static string ClaimsListed = "Yetkiler listelendi";
-
-        public static string OtpSent { get; internal set; }
-        public static AccessToken OtpInvalid { get; internal set; }
+        public static string OtpSent;
+        public static string OtpInvalid = "Geçersiz OTP";
     }
 }

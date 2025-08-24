@@ -1,6 +1,8 @@
-﻿namespace Entities.DTOs
+﻿using Core.Entities;
+
+namespace Entities.DTOs
 {
-    public class OtpVerifyDto
+    public class OtpVerifyDto : IDto
     {
         public string TicketId { get; set; }
         public string Otp { get; set; }

@@ -1,4 +1,5 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,11 @@ namespace WebAPI.Controllers
     public class CartsController : ControllerBase
     {
         ICartService _cartService;
-        public CartsController(ICartService cartService)
+        IMapper _mapper;
+        public CartsController(ICartService cartService, IMapper mapper)
         {
             _cartService = cartService;
+            _mapper = mapper;
         }
 
         [HttpGet("getall")]

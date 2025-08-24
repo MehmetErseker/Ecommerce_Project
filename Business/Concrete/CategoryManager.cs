@@ -1,9 +1,11 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.DTOs;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,15 +14,18 @@ namespace Business.Concrete
     public class CategoryManager : ICategoryService
     {
         private readonly ICategoryDal _categoryDal;
+        private readonly IMapper _mapper;
 
-        public CategoryManager(ICategoryDal categoryDal)
+        public CategoryManager(ICategoryDal categoryDal, IMapper mapper)
         {
             _categoryDal = categoryDal;
+            _mapper = mapper;
         }
 
-        public async Task<IResult> Add(Category category)
+        public async Task<IResult> Add(CategoryDto categoryDto)
         {
-            await _categoryDal.Add(category);
+            var categoryEntity = _mapper.Map<Category>(categoryDto);
+            await _categoryDal.Add(categoryEntity);
             return new SuccessResult(Messages.CategoryAdded);
         }
 
@@ -47,10 +52,13 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CategoryUpdated);
         }
 
-        public async Task<IDataResult<List<Category>>> GetAll()
+        public async Task<IDataResult<List<CategoryDto>>> GetAll()
         {
+
             var categories = await _categoryDal.GetAllWithProducts();
-            return new SuccessDataResult<List<Category>>(categories, Messages.CategoriesListed);
+            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories);
+            return new SuccessDataResult<List<CategoryDto>>(categoriesDto, Messages.CategoriesListed);
+
         }
     }
 }

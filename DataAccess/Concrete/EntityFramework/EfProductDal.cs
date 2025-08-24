@@ -31,5 +31,24 @@ namespace DataAccess.Concrete.EntityFramework
                 return result.ToListAsync();
             }
         }
+
+        public async Task<List<ProductDto>> GetProductsWithCategoryName()
+        {
+            using (Context context = new Context())
+            {
+                var result = await (from p in context.Products
+                                    join c in context.Categories
+                                        on p.CategoryId equals c.Id
+                                    select new ProductDto
+                                    {
+                                        Name = p.Name,
+                                        CategoryId = c.Id,
+                                        UnitPrice = p.UnitPrice,
+                                        UnitsInStock = p.UnitsInStock
+                                    }).ToListAsync();
+
+                return result;
+            }
+        }
     }
 }

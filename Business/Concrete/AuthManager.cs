@@ -110,7 +110,8 @@ namespace Business.Concrete
 
         public async Task<IResult> UserExists(string email)
         {
-            if (await _userService.GetByMail(email) != null)
+            var userResult = await _userService.GetByMail(email);
+            if (userResult.Success && userResult.Data != null)
             {
                 return new ErrorResult(Messages.UserAlreadyExists);
             }

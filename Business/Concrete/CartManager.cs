@@ -1,14 +1,10 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
-using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace Business.Concrete
 {
@@ -16,11 +12,13 @@ namespace Business.Concrete
     {
         ICartDal _cartDal;
         ICartItemDal _cartItemDal;
+        IMapper _mapper;
 
-        public CartManager(ICartDal cartDal, ICartItemDal cartItemDal)
+        public CartManager(ICartDal cartDal, ICartItemDal cartItemDal, IMapper mapper)
         {
             _cartDal = cartDal;
             _cartItemDal = cartItemDal;
+            _mapper = mapper;
         }
 
 
@@ -98,9 +96,11 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CartDeleted);
         }
 
-        public async Task<IDataResult<List<Cart>>> GetAll()
+        public async Task<IDataResult<List<CartDto>>> GetAll()
         {
-            return new SuccessDataResult<List<Cart>>(await _cartDal.GetAllWithItems(), Messages.CartsListed);
+            var CartEntity = await _cartDal.GetAllItems();
+            var CartDto = _mapper.Map<List<CartDto>>(CartEntity);
+            return new SuccessDataResult<List<CartDto>>(CartDto, Messages.CartsListed);
         }
     }
 }

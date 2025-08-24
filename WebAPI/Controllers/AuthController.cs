@@ -30,27 +30,13 @@ namespace WebAPI.Controllers
             }
             
             return Ok(result.Data);
-
-            //var userToLogin = await _authService.Login(userForLoginDto);
-            //if (!userToLogin.Success)
-            //{
-            //    return BadRequest(userToLogin.Message);
-            //}
-
-            //var result = await _authService.CreateAccessToken(userToLogin.Data);
-            //if (result.Success)
-            //{
-            //    return Ok(userToLogin.Message);
-            //}
-
-            //return BadRequest(userToLogin.Message);
         }
 
         [HttpPost("register")]
         public async Task<ActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
             var userExists = await _authService.UserExists(userForRegisterDto.Email);
-            if (userExists.Success)
+            if (!userExists.Success)
             {
                 return BadRequest(userExists.Message);
             }

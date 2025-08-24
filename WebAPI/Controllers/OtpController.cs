@@ -13,12 +13,12 @@ public class OtpController : ControllerBase
         _authService = authService;
     }
 
-    // Faz-2: otp verify -> token üret
+    
     [HttpPost("verify")]
     public async Task<IActionResult> Verify(OtpVerifyDto dto)
     {
         var result = await _authService.VerifyOtpAndCreateToken(dto);
         if (!result.Success) return BadRequest(result.Message);
-        return Ok(result.Data); // AccessToken
+        return Ok(result.Data); 
     }
 }

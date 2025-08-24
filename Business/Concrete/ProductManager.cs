@@ -1,4 +1,5 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Business.BusinessAspects.Autofac;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
@@ -18,18 +19,20 @@ namespace Business.Concrete
     public class ProductManager : IProductService
     {
         IProductDal _productDal;
+        IMapper _mapper;
 
-        public ProductManager(IProductDal productDal)
+        public ProductManager(IProductDal productDal, IMapper mapper)
         {
             _productDal = productDal;
+            _mapper = mapper;
         }
 
-        [SecuredOperation("product.add,admin")]
+        //[SecuredOperation("product.add,admin")]
         [ValidationAspect(typeof(ProductValidator))]
-        public async Task<IResult> Add(Product product)
+        public async Task<IResult> Add(ProductDto productDto)
         {
-
-            await _productDal.Add(product);
+            var productEntity = _mapper.Map<Product>(productDto);
+            await _productDal.Add(productEntity);             
             return new SuccessResult(Messages.ProductAdded);
         }
 
@@ -45,10 +48,10 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductDeleted);
         }
 
-        public async Task<IDataResult<List<Product>>> GetAll()
+        public async Task<IDataResult<List<ProductDto>>> GetAll()
         {
-
-            return new SuccessDataResult<List<Product>>(await _productDal.GetAll(), Messages.ProductsListed);
+            var productsDto = await _productDal.GetProductsWithCategoryName();
+            return new SuccessDataResult<List<ProductDto>>(productsDto, Messages.ProductsListed);
         }
 
         public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int id)
@@ -76,5 +79,6 @@ namespace Business.Concrete
             await _productDal.Update(product);
             return new SuccessResult(Messages.ProductUpdated);
         }
+
     }
 }

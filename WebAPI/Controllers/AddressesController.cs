@@ -1,4 +1,5 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Entities.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace WebAPI.Controllers
     public class AddressesController : ControllerBase
     {
         private readonly IAddressService _addressService;
+        private readonly IMapper _mapper;
 
-        public AddressesController(IAddressService addressService)
+        public AddressesController(IAddressService addressService, IMapper mapper)
         {
             _addressService = addressService;
+            _mapper = mapper;
         }
 
         [HttpGet("getall")]
@@ -41,9 +44,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add(Address address)
+        public async Task<IActionResult> Add(AddressDto addressDto)
         {
-            var result = await _addressService.Add(address);
+            var result = await _addressService.Add(addressDto);
             if (result.Success)
             {
                 return Ok(result);

@@ -7,8 +7,8 @@ namespace Business.Abstract
 {
     public interface IAddressService
     {
-        Task<IDataResult<List<Address>>> GetAll();
-        Task<IResult> Add(Address address);
+        Task<IDataResult<List<AddressDto>>> GetAll();
+        Task<IResult> Add(AddressDto addressDto);
         Task<IResult> Delete(int addressId);
         Task<IResult> Update(Address address);
         Task<IDataResult<Address>> GetById(int addressId);

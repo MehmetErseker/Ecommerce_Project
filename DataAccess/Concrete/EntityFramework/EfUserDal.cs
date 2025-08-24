@@ -36,13 +36,15 @@ namespace DataAccess.Concrete.EntityFramework
             }
 
         }
-        public User GetByMail(string email)
+        public async Task<User> GetByMail(string email)
         {
             using (var context = new Context())
             {
-                return context.Users.SingleOrDefault(u => u.Email == email);
+                return await context.Users.SingleOrDefaultAsync(u => u.Email == email);
             }
         }
+
+        
     }
 
 }

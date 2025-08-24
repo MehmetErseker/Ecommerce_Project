@@ -81,7 +81,11 @@ namespace Business.Concrete
 
         public async Task<IDataResult<User>> GetByMail(string email)
         {
-            var user = _userDal.GetByMail(email);
+            var user = await _userDal.GetByMail(email);
+            if (user == null)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotFound);
+            }
             return new SuccessDataResult<User>(user);
         }
 
@@ -89,5 +93,6 @@ namespace Business.Concrete
         {
             return _userDal.GetClaims(user);
         }
+
     }
 }

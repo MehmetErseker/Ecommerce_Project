@@ -22,5 +22,7 @@ namespace DataAccess.Concrete.EntityFramework
                                     .ToListAsync();
             }
         }
+
+
     }
 }

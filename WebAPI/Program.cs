@@ -2,21 +2,29 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Business.DependencyResolvers.Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Business.Mapping;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ServiceProvider'ý Autofac yap
+
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
-// Autofac modülünü ekle
+
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
     containerBuilder.RegisterModule(new AutofacBusinessModule());
 });
 
-// JWT ayarlarý (appsettings.json’dan okumak daha temiz olur)
+builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
+{
+    cfg.AddProfile<MappingProfile>();
+}).CreateMapper());
+
+
 var key = "mysupersecretsecuritykey_which_is_longer_than_64_bytes_1234567890";
 var keyBytes = Encoding.UTF8.GetBytes(key);
 
@@ -33,13 +41,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Controller ve Swagger kayýtlarý
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache();
 builder.Services.AddSwaggerGen();
+//builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-// Swagger'a JWT ekleyelim
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme

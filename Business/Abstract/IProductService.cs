@@ -6,7 +6,7 @@ namespace Business.Abstract
 {
     public interface IProductService
     {
-        Task<IDataResult<List<Product>>> GetAll();
+        Task<IDataResult<List<ProductDto>>> GetAll();
 
         Task<IDataResult<List<Product>>> GetAllByCategoryId(int id);
 
@@ -16,7 +16,7 @@ namespace Business.Abstract
 
         Task<IDataResult<Product>> GetById(int productId);
 
-        Task<IResult> Add(Product product);
+        Task<IResult> Add(ProductDto productDto);
 
         Task<IResult> Delete(int productId);
 

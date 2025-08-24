@@ -11,7 +11,8 @@ namespace DataAccess.Abstract
 {
     public interface ICartDal: IEntityRepository<Cart>
     {
-        Task<List<Cart>> GetAllWithItems();
-        Task<Cart> GetCartWithItems(int cartId);
+        Task<List<CartDto>> GetAllItems();
+        //Task<List<Cart>> GetAllWithItems();
+        //Task<Cart> GetCartWithItems(int cartId);
     }
 }
