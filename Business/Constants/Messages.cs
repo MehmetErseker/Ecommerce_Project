@@ -1,6 +1,7 @@
 ﻿using Core.Entities.Concrete;
 using Core.Utilities.Security.JWT;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,7 +53,16 @@ namespace Business.Constants
         public static string AccessTokenCreated = "Erişim jetonu oluşturuldu";
         public static string NoClaimsFound = "Hiç bir yetki bulunamadı";
         public static string ClaimsListed = "Yetkiler listelendi";
-        public static string OtpSent;
+        public static string OtpSent = "OTP gönderildi";
         public static string OtpInvalid = "Geçersiz OTP";
+        public static string UserNotActive = "Kullanıcı aktif değil";
+        public static string InsufficientStock = "Yetersiz stok";
+        public static string CartIsEmpty = "Sepet boş";
+        public static string OrderCompleted = "Sipariş tamamlandı";
+        public static string OrderNotFound = "Sipariş bulunamadı";
+        public static string OrdersListed= "Siparişler listelendi";
+        public static string OrderListed = "Sipariş listelendi";
+        public static string OrderDeleted = "Sipariş silindi";
+        public static string ProductListedByCategory = "Ürünler kategoriye göre listelendi";
     }
 }

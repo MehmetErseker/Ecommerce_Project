@@ -12,15 +12,25 @@ namespace Core.DataAccess.EntityFramework
         where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
     {
+        //public async Task Add(TEntity entity)
+        //{
+        //    using (TContext context = new TContext())
+        //    {
+        //        var addedEntity = context.Entry(entity);
+        //        addedEntity.State = EntityState.Added;
+        //        await context.SaveChangesAsync();
+        //    }
+        //}
+
         public async Task Add(TEntity entity)
         {
             using (TContext context = new TContext())
             {
-                var addedEntity = context.Entry(entity);
-                addedEntity.State = EntityState.Added;
+                await context.Set<TEntity>().AddAsync(entity);
                 await context.SaveChangesAsync();
             }
         }
+
 
         public async Task Delete(TEntity entity)
         {
@@ -39,13 +49,31 @@ namespace Core.DataAccess.EntityFramework
             }
         }
 
-        public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        //public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        //{
+        //    using (TContext context = new TContext())
+        //    {
+        //        return filter == null
+        //            ? await context.Set<TEntity>().ToListAsync()
+        //            : await context.Set<TEntity>().Where(filter).ToListAsync();
+        //    }
+        //}
+
+        public async Task<List<TEntity>> GetAll(
+            Expression<Func<TEntity, bool>> filter = null,
+            int pageNumber = 1, int pageSize = 10)
         {
-            using (TContext context = new TContext())
+
+            using (var context = new TContext())
             {
-                return filter == null
-                    ? await context.Set<TEntity>().ToListAsync()
-                    : await context.Set<TEntity>().Where(filter).ToListAsync();
+                IQueryable<TEntity> query = context.Set<TEntity>();
+                if (filter != null)
+                {
+                    query = query.Where(filter);
+                }
+                
+                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+                return await query.ToListAsync();
             }
         }
 

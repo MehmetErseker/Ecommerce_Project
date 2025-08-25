@@ -41,9 +41,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> CreateCart(Cart cart)
+        public async Task<IActionResult> CreateCart(CartDto cartDto)
         {
-            var result = await _cartService.CreateCart(cart);
+            var result = await _cartService.CreateCart(cartDto);
             if (result.Success)
             {
                 return Ok(result);
@@ -84,5 +84,16 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout(int cartId, int userId)
+        {
+            var result = await _cartService.Checkout(cartId, userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+
+        }
     }
 }

@@ -28,6 +28,11 @@ namespace Business.Mapping
             CreateMap<Cart, CartDto>().ReverseMap();
 
             CreateMap<CartItem, CartItemDto>().ReverseMap();
+
+            CreateMap<Order, OrderDto>().ReverseMap();
+
+            CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
+
         }
     }
 }

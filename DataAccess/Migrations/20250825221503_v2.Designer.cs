@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250822054716_v3")]
-    partial class v3
+    [Migration("20250825221503_v2")]
+    partial class v2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -231,8 +231,8 @@ namespace DataAccess.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<short>("UnitsInStock")
-                        .HasColumnType("smallint");
+                    b.Property<int>("UnitsInStock")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

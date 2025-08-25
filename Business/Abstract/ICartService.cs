@@ -5,11 +5,12 @@ namespace Business.Abstract
 {
     public interface ICartService
     {
-        Task<IDataResult<Cart>> GetCartById(int cartId);
+        Task<IResult> Checkout(int cartId, int userId);
+        Task<IDataResult<CartDto>> GetCartById(int cartId);
         Task<IDataResult<List<CartDto>>> GetAll();
         Task<IResult> AddToCart(int cartId, int productId, int quantity);
         Task<IResult> RemoveFromCart(int cartId, int productId);
-        Task<IResult> CreateCart(Cart cart);
+        Task<IResult> CreateCart(CartDto cartDto);
         Task<IResult> DeleteCart(int cartId);
     }
 }

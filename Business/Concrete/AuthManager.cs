@@ -96,6 +96,11 @@ namespace Business.Concrete
                 return new ErrorDataResult<User>(Messages.UserNotFound);
             }
 
+            if (userToCheck.Data.isDeleted)
+            {
+                return new ErrorDataResult<User>(Messages.UserNotActive);
+            }
+
             if (!HashingHelper.VerifyPasswordHash(
                     userForLoginDto.Password,
                     userToCheck.Data.PasswordHash,
@@ -120,6 +125,11 @@ namespace Business.Concrete
 
         public async Task<IDataResult<AccessToken>> CreateAccessToken(User user)
         {
+            if (user.isDeleted)
+            {
+                return new ErrorDataResult<AccessToken>(Messages.UserNotActive);
+            }
+
             var claims = await _userService.GetClaims(user);
             var accessToken = _tokenHelper.CreateToken(user, claims);
             return new SuccessDataResult<AccessToken>(accessToken, Messages.AccessTokenCreated);

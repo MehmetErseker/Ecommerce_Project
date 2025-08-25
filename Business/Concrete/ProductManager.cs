@@ -56,7 +56,8 @@ namespace Business.Concrete
 
         public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int id)
         {
-            var pageNumber = 2;
+
+            return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.CategoryId == id));
         }
 
         public async Task<IDataResult<Product>> GetById(int productId)

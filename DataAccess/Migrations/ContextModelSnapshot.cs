@@ -228,8 +228,8 @@ namespace DataAccess.Migrations
                     b.Property<decimal>("UnitPrice")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<short>("UnitsInStock")
-                        .HasColumnType("smallint");
+                    b.Property<int>("UnitsInStock")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 

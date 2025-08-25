@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class v3 : Migration
+    public partial class v2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -177,7 +177,7 @@ namespace DataAccess.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    UnitsInStock = table.Column<short>(type: "smallint", nullable: false)
+                    UnitsInStock = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
