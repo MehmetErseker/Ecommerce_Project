@@ -44,7 +44,7 @@ namespace Business.Concrete
         public async Task<IDataResult<List<OrderDto>>> GetAll()
         {
     
-            var orders = await _orderDal.GetAll();
+            var orders = await _orderDal.GetAllItems();
             var ordersDto = _mapper.Map<List<OrderDto>>(orders);
             if (ordersDto == null || !ordersDto.Any())
             {

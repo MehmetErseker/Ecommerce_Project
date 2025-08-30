@@ -54,26 +54,26 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ProductDto>>(productsDto, Messages.ProductsListed);
         }
 
-        public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int id)
-        {
+        //public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int CategoryId)
+        //{
 
-            return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.CategoryId == id));
-        }
+        //    return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.CategoryId == CategoryId));
+        //}
 
         public async Task<IDataResult<Product>> GetById(int productId)
         {
             return new SuccessDataResult<Product>(await _productDal.Get(p => p.Id == productId));
         }
 
-        public async Task<IDataResult<List<Product>>> GetByUnitPrice(decimal min, decimal max)
-        {
-            return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
-        }
+        //public async Task<IDataResult<List<Product>>> GetByUnitPrice(decimal min, decimal max)
+        //{
+        //    return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
+        //}
 
-        public async Task<IDataResult<List<ProductDetailDto>>> GetProductDetails()
-        {
-            return new SuccessDataResult<List<ProductDetailDto>>(await _productDal.GetProductDetails());
-        }
+        //public async Task<IDataResult<List<ProductDetailDto>>> GetProductDetails()
+        //{
+        //    return new SuccessDataResult<List<ProductDetailDto>>(await _productDal.GetProductDetails());
+        //}
 
         public async Task<IResult> Update(Product product)
         {

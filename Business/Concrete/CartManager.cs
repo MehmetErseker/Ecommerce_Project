@@ -146,10 +146,18 @@ namespace Business.Concrete
 
         public async Task<IResult> CreateCart(CartDto cartDto)
         {
-            var CartEntity = _mapper.Map<Cart>(cartDto);
-            await _cartDal.Add(CartEntity);
-            return new SuccessResult(Messages.CartCreated);
+            
+            var existingCart = await _cartDal.Get(c => c.UserId == cartDto.UserId);
+            if (existingCart != null)
+            {
+                return new ErrorResult(Messages.UserAlreadyHasCart);
+            }
 
+            
+            var cartEntity = _mapper.Map<Cart>(cartDto);
+            await _cartDal.Add(cartEntity);
+
+            return new SuccessResult(Messages.CartCreated);
         }
 
         public async Task<IResult> RemoveFromCart(int cartId, int productId)

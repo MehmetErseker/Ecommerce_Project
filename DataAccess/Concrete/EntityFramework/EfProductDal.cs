@@ -42,7 +42,7 @@ namespace DataAccess.Concrete.EntityFramework
                                     select new ProductDto
                                     {
                                         Name = p.Name,
-                                        CategoryName = c.Name,
+                                        CategoryId = c.Id,
                                         UnitPrice = p.UnitPrice,
                                         UnitsInStock = p.UnitsInStock
                                     }).ToListAsync();

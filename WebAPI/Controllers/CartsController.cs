@@ -62,6 +62,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpPost("checkout")]
+        public async Task<IActionResult> Checkout(int cartId, int userId)
+        {
+            var result = await _cartService.Checkout(cartId, userId);
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpDelete("removefromcart")]
         public async Task<IActionResult> RemoveFromCart(int cartId, int productId)
         {
@@ -82,18 +93,6 @@ namespace WebAPI.Controllers
                 return Ok(result);
             }
             return BadRequest(result);
-        }
-
-        [HttpPost("checkout")]
-        public async Task<IActionResult> Checkout(int cartId, int userId)
-        {
-            var result = await _cartService.Checkout(cartId, userId);
-            if (result.Success)
-            {
-                return Ok(result);
-            }
-            return BadRequest(result);
-
         }
     }
 }

@@ -12,6 +12,16 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfOrderDal : EfEntityRepositoryBase<Order, Context>, IOrderDal
     {
+        public async Task<List<Order>> GetAllItems()
+        {
+            using (var context = new Context())
+            {
+                return await context.Orders
+                    .Include(c => c.OrderDetails)
+                    .ToListAsync();
+            }
+        }
+
         public async Task<Order> GetOrderByIdWithItems(int orderId)
         {
             using (var context = new Context())
