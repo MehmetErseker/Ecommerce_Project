@@ -160,6 +160,21 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CartCreated);
         }
 
+        public async Task<IResult> CreateCart(int userId)
+        {
+            var existingCart = await _cartDal.Get(c => c.UserId == userId);
+            if (existingCart != null)
+            {
+                return new ErrorResult(Messages.UserAlreadyHasCart);
+            }
+            var cartEntity = new Cart
+            {
+                UserId = userId
+            };
+            await _cartDal.Add(cartEntity);
+            return new SuccessResult(Messages.CartCreated);
+        }
+
         public async Task<IResult> RemoveFromCart(int cartId, int productId)
         {
             var cart = await _cartDal.Get(c => c.Id == cartId);
@@ -288,6 +303,5 @@ namespace Business.Concrete
 
             return new SuccessResult(Messages.OrderCompleted);
         }
-
     }
 }

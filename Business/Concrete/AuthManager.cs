@@ -13,12 +13,14 @@ namespace Business.Concrete
     public class AuthManager : IAuthService
     {
         private IUserService _userService;
+        private ICartService _cartService;
         private ITokenHelper _tokenHelper;
         private IOtpService _otpService;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IOtpService otpService)
+        public AuthManager(IUserService userService, ICartService cartService, ITokenHelper tokenHelper, IOtpService otpService)
         {
             _userService = userService;
+            _cartService = cartService;
             _tokenHelper = tokenHelper;
             _otpService = otpService;
         }
@@ -82,6 +84,7 @@ namespace Business.Concrete
 
             };
             await _userService.Add(user);
+            await _cartService.CreateCart(user.Id);
             return new SuccessDataResult<User>(user, Messages.UserRegistered);
         }
 

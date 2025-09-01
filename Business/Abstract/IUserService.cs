@@ -1,6 +1,7 @@
 ﻿using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using Entities.Concrete;
+using Entities.DTOs;
 
 namespace Business.Abstract
 {
@@ -8,6 +9,7 @@ namespace Business.Abstract
     {
         Task<IDataResult<List<User>>> GetAll();
         Task<IDataResult<List<User>>> GetAllUsers();
+        Task<IDataResult<UserDto>> GetById(int userId);
         Task<IResult> Add(User user);
         Task<IResult> Update(User user);
         Task<IResult> Delete(int UserId); //soft delete

@@ -1,22 +1,28 @@
-﻿using Business.Abstract;
+﻿using AutoMapper;
+using Business.Abstract;
 using Business.Constants;
 using Core.Entities.Concrete;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Business.Concrete
 {
     public class UserManager : IUserService
     {
         private readonly IUserDal _userDal;
+        private readonly IMapper _mapper;
 
-        public UserManager(IUserDal userDal)
+        public UserManager(IUserDal userDal, IMapper mapper)
         {
             _userDal = userDal;
+            _mapper = mapper;
         }
 
         public async Task<IResult> Add(User user)
@@ -51,6 +57,19 @@ namespace Business.Concrete
             return new SuccessDataResult<List<User>>(data, Messages.AllUsersListed);
         }
 
+        public async Task<IDataResult<UserDto>> GetById(int userId)
+        {
+            var user = await _userDal.Get(u => u.Id == userId && !u.isDeleted);
+            var userDto = _mapper.Map<UserDto>(user);
+
+            if (user == null)
+            {
+                return new ErrorDataResult<UserDto>(Messages.UserNotFound);
+            }
+
+            return new SuccessDataResult<UserDto>(userDto, Messages.AllUsersListed);
+        }
+
         //public async Task<IDataResult<List<OperationClaim>>> GetClaims(User user)
         //{
         //    var claims = await _userDal.GetClaims(user);
@@ -81,12 +100,14 @@ namespace Business.Concrete
 
         public async Task<IDataResult<User>> GetByMail(string email)
         {
+
             var user = await _userDal.GetByMail(email);
             if (user == null)
             {
                 return new ErrorDataResult<User>(Messages.UserNotFound);
             }
             return new SuccessDataResult<User>(user);
+
         }
 
         public async Task<List<OperationClaim>> GetClaims(User user)

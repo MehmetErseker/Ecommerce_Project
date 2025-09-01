@@ -41,9 +41,9 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<IActionResult> CreateCart(CartDto cartDto)
+        public async Task<IActionResult> CreateCart(int userId)
         {
-            var result = await _cartService.CreateCart(cartDto);
+            var result = await _cartService.CreateCart(userId);
             if (result.Success)
             {
                 return Ok(result);

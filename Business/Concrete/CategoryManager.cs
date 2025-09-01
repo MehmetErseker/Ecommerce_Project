@@ -41,9 +41,14 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CategoryDeleted);
         }
 
-        public async Task<Category> GetById(int categoryId)
+        public async Task<IDataResult<Category>> GetById(int categoryId)
         {
-            return await _categoryDal.Get(c => c.Id == categoryId);
+            var category = await _categoryDal.GetAllProductsInACategory(categoryId);
+            if(category == null)
+            {
+                return new ErrorDataResult<Category>();
+            }
+            return new SuccessDataResult<Category>(category,Messages.CategoryListed);
         }
 
         public async Task<IResult> Update(Category category)
@@ -52,12 +57,15 @@ namespace Business.Concrete
             return new SuccessResult(Messages.CategoryUpdated);
         }
 
-        public async Task<IDataResult<List<CategoryDto>>> GetAll()
+        public async Task<IDataResult<List<Category>>> GetAll()
         {
-
             var categories = await _categoryDal.GetAllWithProducts();
-            var categoriesDto = _mapper.Map<List<CategoryDto>>(categories);
-            return new SuccessDataResult<List<CategoryDto>>(categoriesDto, Messages.CategoriesListed);
+            return new SuccessDataResult<List<Category>>(categories, Messages.CategoriesListed);
+
+            //dto eklenecek
+            //var categories = await _categoryDal.GetAllWithProducts();
+            //var categoriesDto = _mapper.Map<List<CategoryDto>>(categories);
+            //return new SuccessDataResult<List<CategoryDto>>(categoriesDto, Messages.CategoriesListed);
 
         }
     }

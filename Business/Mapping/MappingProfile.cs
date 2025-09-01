@@ -33,6 +33,8 @@ namespace Business.Mapping
 
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
 
+            CreateMap<User, UserDto>().ReverseMap();
+
         }
     }
 }

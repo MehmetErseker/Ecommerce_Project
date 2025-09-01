@@ -11,5 +11,6 @@ namespace DataAccess.Abstract
     public interface ICategoryDal : IEntityRepository<Category>
     {
         Task<List<Category>> GetAllWithProducts();
+        Task<Category> GetAllProductsInACategory(int categoryId);
     }
 }

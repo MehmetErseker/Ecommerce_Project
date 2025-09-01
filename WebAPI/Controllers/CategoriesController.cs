@@ -32,6 +32,17 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getbyid/{categoryId}")]
+        public async Task<IActionResult> GetById(int categoryId)
+        {
+            var result = await _categoryService.GetById(categoryId);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
         [HttpPost("add")]
         public async Task<IActionResult> Add(CategoryDto categoryDto)
         {

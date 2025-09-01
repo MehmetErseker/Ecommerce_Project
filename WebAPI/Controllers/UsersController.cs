@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -37,6 +37,17 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             var result = await _userService.GetAllUsers();
+            if (result.Success)
+            {
+                return Ok(result);
+            }
+            return BadRequest(result);
+        }
+
+        [HttpGet("getbyid/{userId}")]
+        public async Task<IActionResult> GetById(int userId)
+        {
+            var result = await _userService.GetById(userId);
             if (result.Success)
             {
                 return Ok(result);

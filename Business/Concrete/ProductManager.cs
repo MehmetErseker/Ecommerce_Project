@@ -48,10 +48,13 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ProductDeleted);
         }
 
-        public async Task<IDataResult<List<ProductDto>>> GetAll()
+        public async Task<IDataResult<List<Product>>> GetAll()
         {
-            var productsDto = await _productDal.GetProductsWithCategoryName();
-            return new SuccessDataResult<List<ProductDto>>(productsDto, Messages.ProductsListed);
+            var products = await _productDal.GetAll();
+            return new SuccessDataResult<List<Product>>(products, Messages.ProductsListed);
+            //dto kısmı eklenecek
+            //var productsDto = await _productDal.GetProductsWithCategoryName();
+            //return new SuccessDataResult<List<ProductDto>>(productsDto, Messages.ProductsListed);
         }
 
         //public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int CategoryId)
@@ -62,6 +65,7 @@ namespace Business.Concrete
 
         public async Task<IDataResult<Product>> GetById(int productId)
         {
+   
             return new SuccessDataResult<Product>(await _productDal.Get(p => p.Id == productId));
         }
 

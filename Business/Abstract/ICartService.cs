@@ -10,7 +10,10 @@ namespace Business.Abstract
         Task<IDataResult<List<CartDto>>> GetAll();
         Task<IResult> AddToCart(int cartId, int productId, int quantity);
         Task<IResult> RemoveFromCart(int cartId, int productId);
-        Task<IResult> CreateCart(CartDto cartDto);
+        Task<IResult> CreateCart(int userId);
         Task<IResult> DeleteCart(int cartId);
+        //Task<IResult> CreateCartForUser(int userId);
+
+
     }
 }

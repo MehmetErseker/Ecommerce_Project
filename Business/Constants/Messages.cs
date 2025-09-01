@@ -65,5 +65,6 @@ namespace Business.Constants
         public static string OrderDeleted = "Sipariş silindi";
         public static string ProductListedByCategory = "Ürünler kategoriye göre listelendi";
         public static string UserAlreadyHasCart = "Kullanıcının zaten bir sepeti var";
+        public static string CategoryListed = "Kategori listelendi";
     }
 }

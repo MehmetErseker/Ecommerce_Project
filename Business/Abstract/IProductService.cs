@@ -6,7 +6,7 @@ namespace Business.Abstract
 {
     public interface IProductService
     {
-        Task<IDataResult<List<ProductDto>>> GetAll();
+        Task<IDataResult<List<Product>>> GetAll();
 
         //Task<IDataResult<List<Product>>> GetAllByCategoryId(int categoryId);
 

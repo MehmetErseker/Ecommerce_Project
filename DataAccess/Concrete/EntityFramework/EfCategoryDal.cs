@@ -23,6 +23,16 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
+        public async Task<Category> GetAllProductsInACategory(int categoryId)
+        {
+            using (Context context = new Context())
+            {
+                return await context.Categories
+                                    .Include(c => c.Products)
+                                    .FirstAsync(c => c.Id == categoryId);
+            }
+        }
+
 
     }
 }

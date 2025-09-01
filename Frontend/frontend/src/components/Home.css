@@ -1,0 +1,192 @@
+﻿/* Genel container */
+.home-container {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+    min-height: 100vh;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: #111;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    position: relative;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4cafef;
+    cursor: pointer;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+    .nav-links button {
+        background: transparent;
+        border: 1px solid #4cafef;
+        padding: 0.4rem 0.8rem;
+        border-radius: 6px;
+        color: #4cafef;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+    }
+
+        .nav-links button:hover {
+            background: #4cafef;
+            color: #111;
+        }
+
+/* Dropdown */
+.dropdown {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: transparent;
+    border: 1px solid #4cafef;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    color: #4cafef;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+    .dropdown-btn:hover {
+        background: #4cafef;
+        color: #111;
+    }
+
+.dropdown-menu {
+    position: absolute;
+    top: 120%;
+    left: 0;
+    background: #222;
+    border-radius: 6px;
+    padding: 0.5rem 0;
+    min-width: 160px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    z-index: 10;
+}
+
+.dropdown-item {
+    padding: 0.5rem 1rem;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+    .dropdown-item:hover {
+        background: #444;
+    }
+
+/* Hero section */
+.hero-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 2rem;
+}
+
+    .hero-section h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+        color: #4cafef;
+    }
+
+    .hero-section p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        color: #ddd;
+        max-width: 600px;
+    }
+
+/* Buttons in hero */
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border: none;
+}
+
+.btn-primary {
+    background: #4cafef;
+    color: #111;
+}
+
+    .btn-primary:hover {
+        background: #3b8dc9;
+    }
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #4cafef;
+    color: #4cafef;
+}
+
+    .btn-secondary:hover {
+        background: #4cafef;
+        color: #111;
+    }
+
+/* Products Section */
+.products-section {
+    padding: 2rem;
+    text-align: center;
+}
+
+    .products-section h2 {
+        margin-bottom: 1.5rem;
+        color: #4cafef;
+    }
+
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem;
+}
+
+.product-card {
+    background: #222;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        background: #333;
+    }
+
+    .product-card h3 {
+        color: #fff;
+        margin-bottom: 0.5rem;
+    }
+
+    .product-card p {
+        color: #ccc;
+        margin: 0.3rem 0;
+    }
