@@ -63,14 +63,14 @@ namespace DataAccess.Concrete.EntityFramework
             }
         }
 
-
         public async Task<Cart> GetCartByIdWithItems(int cartId)
         {
             using (var context = new Context())
             {
                 return await context.Carts
                                     .Include(c => c.CartItems)
-                                    .FirstOrDefaultAsync(c => c.Id == cartId);
+                                        .ThenInclude(ci => ci.Product)
+                                    .FirstAsync(c => c.Id == cartId);
             }
         }
 

@@ -1,12 +1,14 @@
 ﻿using AutoMapper;
 using Business.Abstract;
 using Entities.Concrete;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class CartsController : ControllerBase
     {
@@ -29,10 +31,10 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        [HttpGet("getbyid/{cartId}")]
-        public async Task<IActionResult> GetCartById(int cartId)
+        [HttpGet("getbyid/{userId}")]
+        public async Task<IActionResult> GetCartById(int userId)
         {
-            var result = await _cartService.GetCartById(cartId);
+            var result = await _cartService.GetCartById(userId);
             if (result.Success)
             {
                 return Ok(result);
@@ -51,6 +53,7 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+
         [HttpPost("addtocart")]
         public async Task<IActionResult> AddToCart(int cartId, int productId, int quantity)
         {
@@ -61,6 +64,17 @@ namespace WebAPI.Controllers
             }
             return BadRequest(result);
         }
+
+        //[HttpPost("addtocart")]
+        //public async Task<IActionResult> AddToCart(int productId, int quantity)
+        //{
+        //    var result = await _cartService.AddToCartForUser(User, productId, quantity);
+
+        //    if (result.Success)
+        //        return Ok(result);
+
+        //    return BadRequest(result);
+        //}
 
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout(int cartId, int userId)

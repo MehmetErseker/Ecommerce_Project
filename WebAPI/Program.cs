@@ -79,6 +79,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddControllers()
+    .AddJsonOptions(x =>
+        x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles
+    );
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>

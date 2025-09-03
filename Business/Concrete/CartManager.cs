@@ -6,6 +6,7 @@ using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
+using System.Security.Claims;
 
 
 namespace Business.Concrete
@@ -31,17 +32,48 @@ namespace Business.Concrete
             _mapper = mapper;
         }
 
-
-        //public async Task<IResult> AddToCart(int cartId, int productId, int quantity)
+        //public async Task<IResult> AddToCartByUserId(int userId, int productId, int quantity)
         //{
-        //    var cart = await _cartDal.Get(c => c.Id == cartId);
+        //    var cart = await _cartDal.Get(c => c.UserId == userId);
         //    if (cart == null)
         //    {
         //        return new ErrorResult(Messages.CartNotFound);
         //    }
 
+        //    return await AddToCart(cart.Id, productId, quantity);
+        //}
+
+        //public async Task<IResult> AddToCartForUser(ClaimsPrincipal user, int productId, int quantity)
+        //{
+        //    var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier);
+        //    if (userIdClaim == null)
+        //        return new ErrorResult();
+
+        //    int userId = int.Parse(userIdClaim.Value);
+
+        //    var cart = await _cartDal.Get(c => c.UserId == userId);
+        //    if (cart == null)
+        //        return new ErrorResult();
+
+        //    return await AddToCart(cart.Id, productId, quantity);
+        //}
+
+
+        //public async Task<IResult> AddToCart(int cartId, int productId, int quantity)
+        //{
+        //    var cart = await _cartDal.Get(c => c.Id == cartId);
+        //    if (cart == null)
+        //        return new ErrorResult("Cart not found");
+
+        //    var product = await _productDal.Get(p => p.Id == productId);
+        //    if (product == null)
+        //        return new ErrorResult("Product not found");
 
         //    var existingItem = await _cartItemDal.Get(ci => ci.CartId == cartId && ci.ProductId == productId);
+        //    int totalQuantityInCart = existingItem != null ? existingItem.Quantity + quantity : quantity;
+
+        //    if (totalQuantityInCart > product.UnitsInStock)
+        //        return new ErrorResult("Insufficient stock");
 
         //    if (existingItem != null)
         //    {
@@ -52,15 +84,16 @@ namespace Business.Concrete
         //    {
         //        var newItem = new CartItem
         //        {
+        //            CartId = cartId,
         //            ProductId = productId,
-        //            Quantity = quantity,
-        //            CartId = cartId
+        //            Quantity = quantity
         //        };
         //        await _cartItemDal.Add(newItem);
         //    }
 
-        //    return new SuccessResult(Messages.ItemAddedToCart);
+        //    return new SuccessResult("Item added to cart");
         //}
+
 
         public async Task<IResult> AddToCart(int cartId, int productId, int quantity)
         {
@@ -117,30 +150,70 @@ namespace Business.Concrete
         //}
 
 
-        public async Task<IDataResult<CartDto>> GetCartById(int cartId)
+        //public async Task<IDataResult<CartDto>> GetCartById(int cartId)
+        //{
+        //    var cart = await _cartDal.GetCartByIdWithItems(cartId);
+        //    if (cart == null)
+        //        return new ErrorDataResult<CartDto>(Messages.CartNotFound);
+
+        //    var cartDto = new CartDto
+        //    {
+        //        UserId = cart.UserId,
+        //        CartItems = (from ci in cart.CartItems
+        //                     join p in await _productDal.GetAll()
+        //                         on ci.ProductId equals p.Id
+        //                     select new CartItemDto
+        //                     {
+        //                         ProductName = p.Name,
+        //                         Quantity = ci.Quantity,
+        //                         UnitPrice = p.UnitPrice
+        //                     }).ToList()
+        //    };
+
+        //    cartDto.TotalPrice = cartDto.CartItems.Sum(ci => ci.UnitPrice * ci.Quantity);
+
+        //    return new SuccessDataResult<CartDto>(cartDto, Messages.CartListed);
+        //}
+
+        //public async Task<IDataResult<Cart>> GetCartById(int cartId)
+        //{
+        //    var cart = await _cartDal.GetCartByIdWithItems(cartId);
+        //    if (cart == null)
+        //    {
+        //        return new ErrorDataResult<Cart>(Messages.CartNotFound);
+        //    }
+        //    return new SuccessDataResult<Cart>(cart, Messages.CartListed);
+        //}
+
+        public async Task<IDataResult<Cart>> GetCartById(int cartId)
         {
             var cart = await _cartDal.GetCartByIdWithItems(cartId);
             if (cart == null)
-                return new ErrorDataResult<CartDto>(Messages.CartNotFound);
-
-            var cartDto = new CartDto
             {
-                UserId = cart.UserId,
-                CartItems = (from ci in cart.CartItems
-                             join p in await _productDal.GetAll()
-                                 on ci.ProductId equals p.Id
-                             select new CartItemDto
-                             {
-                                 ProductName = p.Name,
-                                 Quantity = ci.Quantity,
-                                 UnitPrice = p.UnitPrice
-                             }).ToList()
-            };
+                return new ErrorDataResult<Cart>(Messages.CartNotFound);
+            }
 
-            cartDto.TotalPrice = cartDto.CartItems.Sum(ci => ci.UnitPrice * ci.Quantity);
+            //navigation property ekle
+            //var products = await _productDal.GetAll();
 
-            return new SuccessDataResult<CartDto>(cartDto, Messages.CartListed);
+            //foreach (var item in cart.CartItems)
+            //{
+            //    var product = products.FirstOrDefault(p => p.Id == item.ProductId);
+            //    if (product != null)
+            //    {
+            //        item.Price = product.UnitPrice;
+            //        item.ProductName = product.Name;
+            //    }
+            //}
+
+            //cart.TotalPrice = cart.CartItems.Sum(ci => ci.Price * ci.Quantity);
+
+            cart.TotalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.UnitPrice);
+
+
+            return new SuccessDataResult<Cart>(cart, Messages.CartListed);
         }
+
 
 
 

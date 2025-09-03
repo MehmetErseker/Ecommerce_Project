@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Entities.Concrete
 {
@@ -9,6 +10,10 @@ namespace Entities.Concrete
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
-    
+        //[NotMapped]
+        //public string ProductName { get; set; }
+
+        public Product Product { get; set; }
+
     }
 }

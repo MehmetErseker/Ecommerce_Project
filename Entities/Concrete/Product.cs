@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Entities.Concrete
@@ -16,5 +17,6 @@ namespace Entities.Concrete
         public int UnitsInStock { get; set; }
 
         //public string Description { get; set; }
+        public ICollection<CartItem> CartItems { get; set; }
     }
 }

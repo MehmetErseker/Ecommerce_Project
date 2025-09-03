@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // 🔹 import düzeltildi
+import { jwtDecode } from "jwt-decode"; // 🔹 import düzeltildi
 import "./Home.css";
 
 function Home() {
@@ -60,11 +60,54 @@ function Home() {
         fetchUser();
     }, []);
 
-    // 🔹 Logout handler fonksiyonu
+    // 🔹 Logout handler
     const handleLogout = () => {
-        localStorage.removeItem("jwtToken"); // token sil
-        setUser(null);                       // state temizle
-        navigate("/");              
+        localStorage.removeItem("jwtToken");
+        setUser(null);
+        navigate("/");
+    };
+
+    // 🔹 Add to Cart handler
+    const handleAddToCart = async (productId) => {
+        const token = localStorage.getItem("jwtToken");
+        if (!token) {
+            navigate("/app/login");
+            return;
+        }
+
+        try {
+            const decoded = jwtDecode(token);
+            const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
+
+            // 🔹 Önce kullanıcının sepetini getir
+            const cartResponse = await axios.get(
+                `https://localhost:44359/api/carts/getbyid/${userId}`,
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (!cartResponse.data.success || !cartResponse.data.data) {
+                alert("Cart not found for this user!");
+                return;
+            }
+
+            const cartId = cartResponse.data.data.id; // ✅ backend'den dönen sepet id'si
+
+            // 🔹 Artık ürünü sepete ekle
+            const response = await axios.post(
+                `https://localhost:44359/api/carts/addtocart?cartId=${cartId}&productId=${productId}&quantity=1`,
+                {},
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            if (response.data.success) {
+                alert("Product added to cart!");
+            } else {
+                alert("Failed to add product: " + response.data.message);
+            }
+        } catch (error) {
+            console.error("Failed to add to cart:", error);
+            alert("Something went wrong while adding to cart.");
+        }
     };
 
     return (
@@ -101,9 +144,10 @@ function Home() {
                         )}
                     </div>
 
-                    {/* Profile & Logout */}
+                    {/* Profile & Cart & Logout */}
                     {user ? (
                         <>
+                            <button onClick={() => navigate("/app/cart")}>🛒 Cart</button>
                             <button onClick={() => navigate("/app/profile")}>
                                 {user.firstName} {user.lastName}
                             </button>
@@ -143,14 +187,22 @@ function Home() {
                 <div className="products-grid">
                     {products.length > 0 ? (
                         products.map((prod) => (
-                            <div
-                                key={prod.id}
-                                className="product-card"
-                                onClick={() => navigate(`/app/product/${prod.id}`)}
-                            >
-                                <h3>{prod.name}</h3>
-                                <p>Price: ${prod.unitPrice}</p>
+                            <div key={prod.id} className="product-card">
+                                <p>{prod.name}</p>
+                                <p>Price: {prod.unitPrice}TL</p>
                                 <p>Stock: {prod.unitsInStock}</p>
+                                <button
+                                    className="add-to-cart-btn"
+                                    onClick={() => handleAddToCart(prod.id)}
+                                >
+                                    Add to Cart
+                                </button>
+                                <button
+                                    className="details-btn"
+                                    onClick={() => navigate(`/app/product/${prod.id}`)}
+                                >
+                                    View Details
+                                </button>
                             </div>
                         ))
                     ) : (
