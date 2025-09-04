@@ -65,17 +65,6 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        //[HttpPost("addtocart")]
-        //public async Task<IActionResult> AddToCart(int productId, int quantity)
-        //{
-        //    var result = await _cartService.AddToCartForUser(User, productId, quantity);
-
-        //    if (result.Success)
-        //        return Ok(result);
-
-        //    return BadRequest(result);
-        //}
-
         [HttpPost("checkout")]
         public async Task<IActionResult> Checkout(int cartId, int userId)
         {

@@ -12,5 +12,6 @@ namespace DataAccess.Abstract
     {
         Task<Order> GetOrderByIdWithItems(int orderId);
         Task<List<Order>> GetAllItems();
+        Task<List<Order>> GetOrdersByUserId(int userId);
     }
 }

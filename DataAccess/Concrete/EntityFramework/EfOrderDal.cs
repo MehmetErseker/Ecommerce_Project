@@ -31,5 +31,17 @@ namespace DataAccess.Concrete.EntityFramework
                                     .FirstAsync(c => c.Id == orderId);
             }
         }
+
+        public async Task<List<Order>> GetOrdersByUserId(int userId)
+        {
+            using (var context = new Context())
+            {
+                return await context.Orders
+                                    .Include(c => c.OrderDetails)
+                                    .ThenInclude(od => od.Product)
+                                    .Where(c => c.UserId == userId)
+                                    .ToListAsync();
+            }
+        }
     }
 }

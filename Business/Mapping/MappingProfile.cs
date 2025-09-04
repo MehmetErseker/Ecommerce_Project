@@ -33,6 +33,9 @@ namespace Business.Mapping
 
             CreateMap<OrderDetail, OrderDetailDto>().ReverseMap();
 
+            CreateMap<OrderDetail, OrderDetailDto>()
+            .ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
+
             CreateMap<User, UserDto>().ReverseMap();
 
         }

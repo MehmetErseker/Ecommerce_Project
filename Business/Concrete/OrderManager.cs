@@ -65,5 +65,16 @@ namespace Business.Concrete
         {
             throw new NotImplementedException();
         }
+
+        public async Task<IDataResult<List<OrderDto>>> GetOrdersByUserId(int userId)
+        {
+            var orderEntity = await _orderDal.GetOrdersByUserId(userId);
+            var orderDto = _mapper.Map<List<OrderDto>>(orderEntity);
+            //if (orders == null || !orders.Any())
+            //{
+            //    return new ErrorDataResult<List<OrderDto>>(Messages.OrderNotFound);
+            //}
+            return new SuccessDataResult<List<OrderDto>>(orderDto, Messages.OrdersListed);
+        }
     }
 }

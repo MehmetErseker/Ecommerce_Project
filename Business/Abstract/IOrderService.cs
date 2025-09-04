@@ -11,6 +11,7 @@ namespace Business.Abstract
     public interface IOrderService
     {
         Task<IDataResult<List<OrderDto>>> GetAll();
+        Task<IDataResult<List<OrderDto>>> GetOrdersByUserId(int userId);
         Task<IDataResult<OrderDto>> GetById(int orderId);
         Task<IResult> Add(Order order);
         Task<IResult> Update(Order order);

@@ -44,17 +44,6 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
-        //[HttpGet("getallbycategoryid/{categoryId}")]
-        //public async Task<IActionResult> GetAllByCategoryId(int categoryId)
-        //{
-        //    var result = await _productService.GetAllByCategoryId(categoryId);
-        //    if (result.Success)
-        //    {
-        //        return Ok(result);
-        //    }
-        //    return BadRequest(result);
-        //}
-
         [HttpPost("add")]
         public async Task<IActionResult> Add(ProductDto productDto)
         {

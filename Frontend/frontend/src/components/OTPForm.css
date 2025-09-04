@@ -1,47 +1,417 @@
-﻿.otp-container {
-    max-width: 400px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    text-align: center;
+﻿/* OTP Form Container */
+.otp-form-container {
+    width: 100%;
+    max-width: 450px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 60px rgba(198, 40, 40, 0.15);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-    .otp-container h3 {
-        margin-bottom: 15px;
-        color: #333;
+/* Header */
+.otp-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.otp-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    display: block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
     }
 
-    .otp-container form {
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.otp-header h3 {
+    font-size: 2rem;
+    background: linear-gradient(135deg, #c62828, #f44336);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.otp-description {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* OTP Form */
+.otp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+/* OTP Inputs */
+.otp-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.otp-input {
+    width: 50px;
+    height: 60px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border: 2px solid rgba(198, 40, 40, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+    .otp-input:focus {
+        border-color: #c62828;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+        transform: translateY(-2px);
     }
 
-    .otp-container input {
-        padding: 8px 12px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        font-size: 16px;
+    .otp-input.filled {
+        border-color: #4caf50;
+        background: rgba(76, 175, 80, 0.1);
+        color: #2e7d32;
     }
 
-    .otp-container button {
-        padding: 10px;
-        border-radius: 6px;
-        border: none;
-        background: #4cafef;
-        color: #fff;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.2s ease-in-out;
+    .otp-input.error {
+        border-color: #f44336;
+        background: rgba(244, 67, 54, 0.1);
+        animation: shake 0.5s ease-in-out;
     }
 
-        .otp-container button:hover {
-            background: #3b8dc9;
-        }
+@keyframes shake {
+    0%, 20%, 40%, 60%, 80%, 100% {
+        transform: translateX(0);
+    }
 
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+}
+
+.otp-input:disabled {
+    background: rgba(0, 0, 0, 0.05);
+    cursor: not-allowed;
+}
+
+/* Timer */
+.otp-timer {
+    text-align: center;
+    padding: 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.timer-active {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4caf50;
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.timer-expired {
+    background: rgba(244, 67, 54, 0.1);
+    color: #f44336;
+    border: 1px solid rgba(244, 67, 54, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.timer-icon,
+.expired-icon {
+    font-size: 1.2rem;
+}
+
+/* Verify Button */
+.verify-btn {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #c62828, #f44336);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+    .verify-btn:hover:not(:disabled) {
+        background: linear-gradient(135deg, #b71c1c, #d32f2f);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
+    }
+
+    .verify-btn:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+    }
+
+    .verify-btn.loading {
+        background: linear-gradient(135deg, #c62828, #f44336);
+        opacity: 0.8;
+    }
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.btn-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+    .btn-spinner.small {
+        width: 16px;
+        height: 16px;
+    }
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Messages */
 .otp-message {
-    margin-top: 10px;
-    color: green;
+    padding: 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+    .otp-message.success {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4caf50;
+        border: 2px solid rgba(76, 175, 80, 0.3);
+    }
+
+    .otp-message.error {
+        background: rgba(244, 67, 54, 0.1);
+        color: #f44336;
+        border: 2px solid rgba(244, 67, 54, 0.3);
+    }
+
+.message-icon {
+    font-size: 1.2rem;
+}
+
+/* Footer */
+.otp-footer {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(198, 40, 40, 0.1);
+}
+
+/* Resend Section */
+.resend-section {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+    .resend-section p {
+        color: #666;
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+.resend-btn {
+    background: transparent;
+    border: 2px solid #c62828;
+    color: #c62828;
+    padding: 0.7rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+    .resend-btn:hover:not(:disabled) {
+        background: rgba(198, 40, 40, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .resend-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .resend-btn.loading {
+        opacity: 0.8;
+    }
+
+.resend-timer {
+    display: block;
+    color: #999;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+/* Help Section */
+.otp-help {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.help-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.help-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .otp-form-container {
+        padding: 2rem;
+        margin: 1rem;
+    }
+
+    .otp-header h3 {
+        font-size: 1.8rem;
+    }
+
+    .otp-icon {
+        font-size: 3rem;
+    }
+
+    .otp-inputs {
+        gap: 0.3rem;
+    }
+
+    .otp-input {
+        width: 45px;
+        height: 55px;
+        font-size: 1.3rem;
+    }
+
+    .otp-description {
+        font-size: 0.95rem;
+    }
+
+    .help-item {
+        flex-direction: column;
+        gap: 0.3rem;
+        text-align: center;
+        padding: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .otp-form-container {
+        padding: 1.5rem;
+    }
+
+    .otp-header h3 {
+        font-size: 1.6rem;
+    }
+
+    .otp-inputs {
+        gap: 0.2rem;
+    }
+
+    .otp-input {
+        width: 40px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .verify-btn,
+    .resend-btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.2rem;
+    }
+
+    .otp-description {
+        font-size: 0.9rem;
+    }
+
+    .help-item {
+        font-size: 0.85rem;
+    }
+
+    .timer-active,
+    .timer-expired {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+    }
+}
+
+/* Focus management for better UX */
+.otp-input:focus + .otp-input {
+    border-color: rgba(198, 40, 40, 0.4);
+}
+
+/* Animation for auto-fill */
+.otp-input.auto-filled {
+    animation: fillHighlight 0.5s ease-in-out;
+}
+
+@keyframes fillHighlight {
+    0% {
+        background-color: rgba(76, 175, 80, 0.3);
+    }
+
+    100% {
+        background-color: rgba(76, 175, 80, 0.1);
+    }
 }
