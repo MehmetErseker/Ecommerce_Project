@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./ProductPage.css";
+import RecordRTC from "recordrtc";
 
 function ProductPage() {
     const { productId } = useParams();
@@ -15,6 +16,16 @@ function ProductPage() {
     const [user, setUser] = useState(null);
     const [addingToCart, setAddingToCart] = useState(false);
 
+    // Voice state
+    const [voiceRec, setVoiceRec] = useState(null);
+    const [voiceRecording, setVoiceRecording] = useState(false);
+    const recRef = useRef(null);
+    const streamRef = useRef(null);
+    const autoStopTimerRef = useRef(null);
+
+    // Seçili quantity (voice ile de güncellenebilir)
+    const [qty, setQty] = useState(1);
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -23,7 +34,6 @@ function ProductPage() {
                 );
                 if (response.data.success) {
                     const data = response.data.data;
-                    // Normalize both PascalCase and camelCase keys
                     const normalizedProduct = {
                         id: data.id ?? data.Id,
                         name: data.name ?? data.Name,
@@ -33,7 +43,6 @@ function ProductPage() {
                     };
                     setProduct(normalizedProduct);
 
-                    // Fetch category information
                     if (normalizedProduct.categoryId) {
                         try {
                             const categoryResponse = await axios.get(
@@ -80,10 +89,167 @@ function ProductPage() {
 
         fetchProduct();
         fetchUser();
+
+        // cleanup on unmount
+        return () => {
+            try { if (autoStopTimerRef.current) clearTimeout(autoStopTimerRef.current); } catch { }
+            try { streamRef.current?.getTracks()?.forEach(t => t.stop()); } catch { }
+            try { recRef.current?.destroy?.(); } catch { }
+        };
     }, [productId]);
 
-    // Add to Cart handler
-    const handleAddToCart = async () => {
+    // --- Quantity parser (tolerant) ---
+    const extractQuantity = (rawText) => {
+        if (!rawText) return null;
+        const t = rawText
+            .toLowerCase()
+            .replace(/[.,!?]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+
+        // 1) digits: son görülen sayıyı al (örn. "2 adet", "al 3 tane")
+        const nums = [...t.matchAll(/\b(\d{1,3})\b/g)].map(m => parseInt(m[1], 10)).filter(n => !isNaN(n) && n > 0);
+        if (nums.length) return nums[nums.length - 1];
+
+        // 2) words 1..10
+        const words = {
+            "bir": 1, "iki": 2, "üç": 3, "uc": 3, "dört": 4, "dort": 4, "beş": 5, "bes": 5,
+            "altı": 6, "alti": 6, "yedi": 7, "sekiz": 8, "dokuz": 9, "on": 10
+        };
+        for (const [w, n] of Object.entries(words)) {
+            if (new RegExp(`\\b${w}\\b`, "i").test(t)) return n;
+        }
+        return null;
+    };
+
+    const startVoice = async () => {
+        try {
+            if (voiceRecording) return;
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            streamRef.current = stream;
+
+            const rec = new RecordRTC(stream, {
+                type: "audio",
+                mimeType: "audio/wav",
+                recorderType: RecordRTC.StereoAudioRecorder,
+                desiredSampRate: 16000
+            });
+            rec.startRecording();
+            setVoiceRec(rec);
+            setVoiceRecording(true);
+            recRef.current = rec;
+
+            // 3.3s sonra otomatik stop (son hece kesilmesin)
+            autoStopTimerRef.current = setTimeout(() => {
+                stopVoice("auto").catch(() => { });
+            }, 3300);
+        } catch (e) {
+            console.error(e);
+            toast.error("Mikrofon izni gerekli veya kayıt başlatılamadı.");
+        }
+    };
+
+    const stopVoice = async (reason = "manual") => {
+        try {
+            if (autoStopTimerRef.current) {
+                clearTimeout(autoStopTimerRef.current);
+                autoStopTimerRef.current = null;
+            }
+
+            const rec = recRef.current || voiceRec;
+            if (!rec) return;
+
+            // stopRecording'i Promise ile bekle → Blob hazır
+            const getBlobAfterStop = () =>
+                new Promise((resolve) => {
+                    try {
+                        rec.stopRecording(() => {
+                            try { resolve(rec.getBlob()); } catch { resolve(null); }
+                        });
+                    } catch { resolve(null); }
+                });
+
+            const blob = await getBlobAfterStop();
+
+            // kaynakları kapat
+            try { streamRef.current?.getTracks()?.forEach(t => t.stop()); } catch { }
+            try { rec.destroy(); } catch { }
+            recRef.current = null;
+            streamRef.current = null;
+
+            if (!(blob instanceof Blob)) {
+                toast.error("Please try again.");
+                setVoiceRecording(false);
+                setVoiceRec(null);
+                return;
+            }
+
+            // Blob'u File olarak ekle
+            const file = new File([blob], "input.wav", { type: blob.type || "audio/wav" });
+            const form = new FormData();
+            form.append("Audio", file); // DTO kullandıysan 'Audio', aksi halde 'audio' da çalışır
+
+            try {
+                const res = await axios.post(
+                    "https://localhost:44359/api/voice/interpret",
+                    form // Content-Type'ı tarayıcı ayarlasın
+                );
+                const data = res.data;
+
+                const transcript = (data?.transcript || "")
+                    .toLowerCase()
+                    .replace(/[.,!?]/g, " ")
+                    .replace(/\s+/g, " ")
+                    .trim();
+
+                // adet yakala (2, 3, iki, üç, ...)
+                const qDetected = extractQuantity(transcript) ?? 1;
+
+                // "sepete" + "ek*" veya intent = add_to_cart → direkt ekle
+                const looksLikeAdd =
+                    data?.intent === "add_to_cart" ||
+                    /\bsepete\b/.test(transcript) ||
+                    /\bek\w*\b/.test(transcript) || // ek, ekle, ekler...
+                    /\bat\w*\b/.test(transcript) ||  // at/atın/attın (opsiyonel)
+                    /\bkoy\w*\b/.test(transcript);   // koy/koyun (opsiyonel)
+
+                // Sadece "2 adet", "üç tane" gibi miktar söylerse de otomatik ekle
+                const quantityOnly =
+                    qDetected &&
+                    (
+                        /^\d+\s*(adet|tane)?$/.test(transcript) ||
+                        /^(bir|iki|üç|uc|dört|dort|beş|bes|altı|alti|yedi|sekiz|dokuz|on)\s*(adet|tane)?$/.test(transcript)
+                    );
+
+                // state'e yaz (UI'da Add to Cart (xN) gösterir)
+                setQty(qDetected);
+
+                if (looksLikeAdd || quantityOnly) {
+                    await handleAddToCart(qDetected);
+                    toast.success(`Sesli komut: x${qDetected} sepete eklendi.`);
+                } else {
+                    toast.info(
+                        `Adet ${qDetected} olarak ayarlandı${data?.transcript ? ` ("${data.transcript}")` : ""}. `
+                        + `İstersen "sepete ekle" de diyebilirsin.`
+                    );
+                }
+            } catch (err) {
+                console.error(err);
+                toast.error("Sesli komut gönderilirken bir hata oluştu.");
+            } finally {
+                setVoiceRecording(false);
+                setVoiceRec(null);
+            }
+        } catch (e) {
+            console.error(e);
+            setVoiceRecording(false);
+            setVoiceRec(null);
+            try { streamRef.current?.getTracks()?.forEach(t => t.stop()); } catch { }
+        }
+    };
+
+    // Add to Cart handler (adet parametreli)
+    const handleAddToCart = async (quantityArg) => {
         const token = localStorage.getItem("jwtToken");
         if (!token) {
             navigate("/app/login");
@@ -95,13 +261,15 @@ function ProductPage() {
             return;
         }
 
+        const quantity = Math.max(1, Number.isFinite(quantityArg) ? quantityArg : (qty || 1));
+
         setAddingToCart(true);
 
         try {
             const decoded = jwtDecode(token);
             const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
-            // Get user's cart first
+            // Kullanıcının sepeti
             const cartResponse = await axios.get(
                 `https://localhost:44359/api/carts/getbyid/${userId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
@@ -114,15 +282,15 @@ function ProductPage() {
 
             const cartId = cartResponse.data.data.id;
 
-            // Add product to cart
+            // Sepete ekle (adet ile)
             const response = await axios.post(
-                `https://localhost:44359/api/carts/addtocart?cartId=${cartId}&productId=${product.id}&quantity=1`,
+                `https://localhost:44359/api/carts/addtocart?cartId=${cartId}&productId=${product.id}&quantity=${quantity}`,
                 {},
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
             if (response.data.success) {
-                toast.success("Product added to cart!");
+                toast.success(`Product added to cart (x${quantity})!`);
             } else {
                 toast.error("Failed to add product: " + response.data.message);
             }
@@ -135,7 +303,7 @@ function ProductPage() {
     };
 
     const handleGoBack = () => {
-        navigate(-1); // Go back to previous page
+        navigate(-1);
     };
 
     const handleBackToHome = () => {
@@ -303,7 +471,7 @@ function ProductPage() {
                         <div className="product-actions">
                             <button
                                 className={`btn-add-to-cart ${product.unitsInStock <= 0 ? 'disabled' : ''} ${addingToCart ? 'loading' : ''}`}
-                                onClick={handleAddToCart}
+                                onClick={() => handleAddToCart()}
                                 disabled={product.unitsInStock <= 0 || addingToCart}
                             >
                                 {addingToCart ? (
@@ -319,9 +487,17 @@ function ProductPage() {
                                 ) : (
                                     <>
                                         <span className="btn-icon">🛒</span>
-                                        Add to Cart
+                                        Add to Cart{qty > 1 ? ` (x${qty})` : ""}
                                     </>
                                 )}
+                            </button>
+
+                            <button
+                                className="btn-add-to-cart"
+                                onClick={voiceRecording ? () => stopVoice("manual") : startVoice}
+                                disabled={addingToCart}
+                            >
+                                {voiceRecording ? "⏹ Komutu Gönder" : "🎙 Adeti Sesle Seç / Ekle"}
                             </button>
 
                             {user && (

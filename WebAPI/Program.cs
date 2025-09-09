@@ -1,4 +1,4 @@
-using Autofac;
+﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Business.DependencyResolvers.Autofac;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,9 +10,7 @@ using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-
 
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
@@ -23,7 +21,6 @@ builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
 {
     cfg.AddProfile<MappingProfile>();
 }).CreateMapper());
-
 
 var key = "mysupersecretsecuritykey_which_is_longer_than_64_bytes_1234567890";
 var keyBytes = Encoding.UTF8.GetBytes(key);
@@ -41,13 +38,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+// ✅ EKLENDİ: Python servisine HTTP ile bağlanmak için
+builder.Services.AddHttpClient();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMemoryCache();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddAutoMapper(typeof(MappingProfile));
-
 
 builder.Services.AddSwaggerGen(c =>
 {

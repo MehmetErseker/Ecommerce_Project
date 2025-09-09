@@ -44,6 +44,14 @@ namespace WebAPI.Controllers
             return BadRequest(result);
         }
 
+        [HttpGet("getbyname/{productName}")]
+        public async Task<IActionResult> GetByName(string productName)
+        {
+            var result = await _productService.GetByName(productName);
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+
         [HttpPost("add")]
         public async Task<IActionResult> Add(ProductDto productDto)
         {

@@ -22,5 +22,7 @@ namespace Business.Abstract
 
         Task<IResult> Update(Product product);
 
+        Task<IDataResult<List<Product>>> GetByName(string productName);
+
     }
 }

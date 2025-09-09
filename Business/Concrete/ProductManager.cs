@@ -69,6 +69,15 @@ namespace Business.Concrete
             return new SuccessDataResult<Product>(await _productDal.Get(p => p.Id == productId));
         }
 
+        public async Task<IDataResult<List<Product>>> GetByName(string productName)
+        {
+            // İsteğe göre kültür-duyarlı/duyarsız filtre; StartsWith prefix için idealdir.
+            var list = await _productDal.GetAll(p => p.Name.StartsWith(productName));
+            return list.Any()
+                ? new SuccessDataResult<List<Product>>(list, Messages.ProductsListed)
+                : new ErrorDataResult<List<Product>>(Messages.ProductNotFound);
+        }
+
         //public async Task<IDataResult<List<Product>>> GetByUnitPrice(decimal min, decimal max)
         //{
         //    return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));

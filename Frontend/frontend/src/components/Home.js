@@ -103,11 +103,12 @@ function Home() {
             if (response.data.success) {
                 toast.success("Product added to cart!");
             } else {
-                alert("Failed to add product: " + response.data.message);
+                toast.error("Failed to add product to cart.");
+                //alert("Failed to add product: " + response.data.message);
             }
         } catch (error) {
             console.error("Failed to add to cart:", error);
-            alert("Something went wrong while adding to cart.");
+            toast.error("Something went wrong while adding to cart.")
         }
     };
 
