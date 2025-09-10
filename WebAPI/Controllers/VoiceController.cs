@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Net.Http.Headers;
 
-// ...
 
 [ApiController]
 [Route("api/voice")]
@@ -16,7 +15,7 @@ public class VoiceController : ControllerBase
         _cfg = cfg;
     }
 
-    // ✅ Swagger için doğru: multipart/form-data + FromForm DTO
+    // Swagger için doğru: multipart/form-data + FromForm DTO
     [HttpPost("interpret")]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Interpret([FromForm] InterpretRequest request, CancellationToken ct)

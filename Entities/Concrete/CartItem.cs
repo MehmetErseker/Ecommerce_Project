@@ -12,7 +12,6 @@ namespace Entities.Concrete
         public decimal Price { get; set; }
         //[NotMapped]
         //public string ProductName { get; set; }
-
         public Product Product { get; set; }
 
     }

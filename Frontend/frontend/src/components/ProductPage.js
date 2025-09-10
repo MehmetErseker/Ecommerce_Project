@@ -26,6 +26,14 @@ function ProductPage() {
     // Seçili quantity (voice ile de güncellenebilir)
     const [qty, setQty] = useState(1);
 
+    // 🔗 Home.js ile aynı: API kökü ve resim URL birleştirici
+    const API_BASE = "https://localhost:44359";
+    const resolveImageUrl = (imageUrl) => {
+        if (!imageUrl) return null;
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) return imageUrl;
+        return `${API_BASE}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+    };
+
     useEffect(() => {
         const fetchProduct = async () => {
             try {
@@ -40,6 +48,7 @@ function ProductPage() {
                         categoryId: data.categoryId ?? data.CategoryId,
                         unitPrice: data.unitPrice ?? data.UnitPrice,
                         unitsInStock: data.unitsInStock ?? data.UnitsInStock,
+                        imageUrl: data.imageUrl ?? data.ImageUrl, // ✅ resim alanı eklendi
                     };
                     setProduct(normalizedProduct);
 
@@ -403,7 +412,16 @@ function ProductPage() {
             <div className="product-content">
                 <div className="product-image-section">
                     <div className="product-image">
-                        <div className="product-placeholder">📦</div>
+                        {product.imageUrl ? (
+                            <img
+                                src={resolveImageUrl(product.imageUrl)}
+                                alt={product.name}
+                                className="product-img"
+                                loading="lazy"
+                            />
+                        ) : (
+                            <div className="product-placeholder">📦</div>
+                        )}
                         {product.unitsInStock <= 0 && (
                             <div className="out-of-stock-overlay">
                                 <span>Out of Stock</span>

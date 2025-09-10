@@ -9,8 +9,9 @@ namespace Entities.Concrete
         public int CategoryId { get; set; }
         public decimal UnitPrice { get; set; }
         public int UnitsInStock { get; set; }
+        public string ImageUrl { get; set; }
 
         //public string Description { get; set; }
-        public ICollection<CartItem> CartItems { get; set; }
+        //public ICollection<CartItem> CartItems { get; set; }
     }
 }

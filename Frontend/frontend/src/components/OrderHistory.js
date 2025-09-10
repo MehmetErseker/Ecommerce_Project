@@ -29,7 +29,11 @@ function OrderHistory() {
                 );
 
                 if (response.data.success) {
-                    setOrders(response.data.data);
+                    // 🔽 Yeni ekleme: Siparişleri tarihe göre azalan sırada (en son sipariş en üstte)
+                    const sortedOrders = [...response.data.data].sort(
+                        (a, b) => new Date(b.date) - new Date(a.date)
+                    );
+                    setOrders(sortedOrders);
                 } else {
                     toast.error("Failed to load orders");
                 }

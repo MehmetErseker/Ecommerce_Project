@@ -28,6 +28,28 @@
     backdrop-filter: blur(10px);
 }
 
+/* Ürün görseli */
+.product-image {
+    width: 100%;
+    aspect-ratio: 1 / 1; /* Kare yapar (en = boy) */
+    background: linear-gradient(135deg, #ffebee, #ffcdd2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(198, 40, 40, 0.1);
+    overflow: hidden;
+}
+
+.product-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Resmi kırpma, kutuya orantılı sığdır */
+    display: block;
+}
+
+
+
+
 .logo {
     font-size: 1.8rem;
     font-weight: bold;
@@ -507,6 +529,29 @@
 .no-products p {
     font-size: 1.2rem;
 }
+
+.nav-search {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0 16px;
+}
+
+.nav-search-input {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.nav-search-btn {
+    padding: 8px 10px;
+    border: none;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #fff;
+    cursor: pointer;
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {

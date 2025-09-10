@@ -59,20 +59,33 @@ namespace Core.DataAccess.EntityFramework
         //    }
         //}
 
-        public async Task<List<TEntity>> GetAll(
-            Expression<Func<TEntity, bool>> filter = null,
-            int pageNumber = 1, int pageSize = 10)
-        {
+        //public async Task<List<TEntity>> GetAll(
+        //    Expression<Func<TEntity, bool>> filter = null,
+        //    int pageNumber = 1, int pageSize = 12)
+        //{
 
+        //    using (var context = new TContext())
+        //    {
+        //        IQueryable<TEntity> query = context.Set<TEntity>();
+        //        if (filter != null)
+        //        {
+        //            query = query.Where(filter);
+        //        }
+
+        //        query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+        //        return await query.ToListAsync();
+        //    }
+        //}
+
+
+        public async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>> filter = null)
+        {
             using (var context = new TContext())
             {
                 IQueryable<TEntity> query = context.Set<TEntity>();
                 if (filter != null)
-                {
                     query = query.Where(filter);
-                }
-                
-                query = query.Skip((pageNumber - 1) * pageSize).Take(pageSize);
+
                 return await query.ToListAsync();
             }
         }

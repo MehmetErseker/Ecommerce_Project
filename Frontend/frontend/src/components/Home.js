@@ -12,6 +12,21 @@ function Home() {
     const [showDropdown, setShowDropdown] = useState(false);
     const [user, setUser] = useState(null);
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const pageSize = 12;
+
+    // 🔗 API kökü (statik resimler de bu domain/porttan servis ediliyor)
+    const API_BASE = "https://localhost:44359";
+
+    // 🔧 Yardımcı: imageUrl absolute değilse API_BASE ile birleştir
+    const resolveImageUrl = (imageUrl) => {
+        if (!imageUrl) return null;
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) return imageUrl;
+        // leading slash yoksa ekleyelim
+        return `${API_BASE}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+    };
+
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -61,15 +76,18 @@ function Home() {
         fetchUser();
     }, []);
 
-    // Logout handler
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [products]);
+
     const handleLogout = () => {
         localStorage.removeItem("jwtToken");
         setUser(null);
         navigate("/");
     };
 
-    // Add to Cart handler
-    const handleAddToCart = async (productId) => {
+    const handleAddToCart = async (productId, e) => {
+        e.stopPropagation(); // ürün kartı tıklamasını engelle
         const token = localStorage.getItem("jwtToken");
         if (!token) {
             navigate("/app/login");
@@ -80,7 +98,6 @@ function Home() {
             const decoded = jwtDecode(token);
             const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
-            // Get user's cart first
             const cartResponse = await axios.get(
                 `https://localhost:44359/api/carts/getbyid/${userId}`,
                 { headers: { Authorization: `Bearer ${token}` } }
@@ -93,7 +110,6 @@ function Home() {
 
             const cartId = cartResponse.data.data.id;
 
-            // Add product to cart
             const response = await axios.post(
                 `https://localhost:44359/api/carts/addtocart?cartId=${cartId}&productId=${productId}&quantity=1`,
                 {},
@@ -104,7 +120,6 @@ function Home() {
                 toast.success("Product added to cart!");
             } else {
                 toast.error("Failed to add product to cart.");
-                //alert("Failed to add product: " + response.data.message);
             }
         } catch (error) {
             console.error("Failed to add to cart:", error);
@@ -112,15 +127,57 @@ function Home() {
         }
     };
 
+    const handleSearch = () => {
+        const q = searchTerm.trim();
+        if (!q) return;
+        navigate(`/app/search?q=${encodeURIComponent(q)}`);
+    };
+
+    const handleSearchKeyDown = (e) => {
+        if (e.key === "Enter") {
+            handleSearch();
+        }
+    };
+
+    const totalItems = products.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+    const safePage = Math.min(Math.max(currentPage, 1), totalPages);
+    const startIndex = (safePage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const visibleProducts = products.slice(startIndex, endIndex);
+
+    const goToPage = (p) => {
+        const page = Math.min(Math.max(p, 1), totalPages);
+        setCurrentPage(page);
+    };
+
+    const nextPage = () => goToPage(currentPage + 1);
+    const prevPage = () => goToPage(currentPage - 1);
+
     return (
         <div className="home-container">
             <nav className="navbar">
-                <div className="logo">
+                <div className="logo" onClick={() => navigate("/")}>
                     <span className="logo-icon">🏪</span>
                     PentaStore
                 </div>
+
+                <div className="nav-search">
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onKeyDown={handleSearchKeyDown}
+                        placeholder="Search"
+                        className="nav-search-input"
+                        aria-label="Search products"
+                    />
+                    <button className="nav-search-btn" onClick={handleSearch}>
+                        🔎
+                    </button>
+                </div>
+
                 <div className="nav-links">
-                    {/* Categories Dropdown */}
                     <div className="dropdown">
                         <button
                             className="dropdown-btn"
@@ -151,7 +208,6 @@ function Home() {
                         )}
                     </div>
 
-                    {/* Profile & Cart & Logout */}
                     {user ? (
                         <div className="user-section">
                             <button className="nav-btn" onClick={() => navigate("/app/cart")}>
@@ -225,50 +281,68 @@ function Home() {
                 </div>
             )}
 
-            {/* Products Section */}
             <div className="products-section">
                 <div className="products-header">
                     <h2>Featured Products</h2>
                     <p>Discover our carefully curated collection of premium products</p>
                 </div>
                 <div className="products-grid">
-                    {products.length > 0 ? (
-                        products.map((prod) => (
-                            <div key={prod.id} className="product-card">
-                                <div className="product-image">
-                                    <div className="product-placeholder">📦</div>
-                                </div>
-                                <div className="product-info">
-                                    <h3>{prod.name}</h3>
-                                    <div className="product-price">
-                                        <span className="price">{prod.unitPrice}TL</span>
+                    {visibleProducts.length > 0 ? (
+                        visibleProducts.map((prod) => {
+                            const imgSrc = resolveImageUrl(prod.imageUrl); // ← ImageUrl kullan
+                            return (
+                                <div
+                                    key={prod.id}
+                                    className="product-card"
+                                    onClick={() => navigate(`/app/product/${prod.id}`)}
+                                >
+                                    <div className="product-image">
+                                        {imgSrc ? (
+                                            <img
+                                                src={imgSrc}
+                                                alt={prod.name}
+                                                className="product-img"
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div className="product-placeholder">📦</div>
+                                        )}
                                     </div>
-                                    <div className="product-stock">
-                                        <span className="stock-label">Stock:</span>
-                                        <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                                            {prod.unitsInStock}
-                                        </span>
+                                    <div className="product-info">
+                                        <h3>{prod.name}</h3>
+                                        <div className="product-price">
+                                            <span className="price">{prod.unitPrice}TL</span>
+                                        </div>
+                                        <div className="product-stock">
+                                            <span className="stock-label">Stock:</span>
+                                            <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                                {prod.unitsInStock}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="product-actions">
+                                        <button
+                                            className="add-to-cart-btn"
+                                            onClick={(e) => handleAddToCart(prod.id, e)}
+                                            disabled={prod.unitsInStock <= 0}
+                                        >
+                                            <span className="btn-icon">🛒</span>
+                                            Add to Cart
+                                        </button>
+                                        <button
+                                            className="details-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                navigate(`/app/product/${prod.id}`);
+                                            }}
+                                        >
+                                            <span className="btn-icon">👁️</span>
+                                            View Details
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="product-actions">
-                                    <button
-                                        className="add-to-cart-btn"
-                                        onClick={() => handleAddToCart(prod.id)}
-                                        disabled={prod.unitsInStock <= 0}
-                                    >
-                                        <span className="btn-icon">🛒</span>
-                                        Add to Cart
-                                    </button>
-                                    <button
-                                        className="details-btn"
-                                        onClick={() => navigate(`/app/product/${prod.id}`)}
-                                    >
-                                        <span className="btn-icon">👁️</span>
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        ))
+                            );
+                        })
                     ) : (
                         <div className="no-products">
                             <div className="no-products-icon">📋</div>
@@ -276,6 +350,28 @@ function Home() {
                         </div>
                     )}
                 </div>
+
+                {totalPages > 1 && (
+                    <div className="pagination" style={{ marginTop: 16, display: "flex", gap: 8, justifyContent: "center", alignItems: "center" }}>
+                        <button
+                            className="pager-btn"
+                            onClick={prevPage}
+                            disabled={currentPage <= 1}
+                        >
+                            ‹ Prev
+                        </button>
+                        <span className="pager-info">
+                            Page {safePage} / {totalPages}
+                        </span>
+                        <button
+                            className="pager-btn"
+                            onClick={nextPage}
+                            disabled={currentPage >= totalPages}
+                        >
+                            Next ›
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

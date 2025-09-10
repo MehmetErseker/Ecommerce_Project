@@ -11,6 +11,7 @@ using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.DTOs;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -32,9 +33,10 @@ namespace Business.Concrete
         public async Task<IResult> Add(ProductDto productDto)
         {
             var productEntity = _mapper.Map<Product>(productDto);
-            await _productDal.Add(productEntity);             
+            await _productDal.Add(productEntity);
             return new SuccessResult(Messages.ProductAdded);
         }
+
 
         public async Task<IResult> Delete(int productId)
         {
@@ -57,12 +59,6 @@ namespace Business.Concrete
             //return new SuccessDataResult<List<ProductDto>>(productsDto, Messages.ProductsListed);
         }
 
-        //public async Task<IDataResult<List<Product>>> GetAllByCategoryId(int CategoryId)
-        //{
-
-        //    return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.CategoryId == CategoryId));
-        //}
-
         public async Task<IDataResult<Product>> GetById(int productId)
         {
    
@@ -71,22 +67,16 @@ namespace Business.Concrete
 
         public async Task<IDataResult<List<Product>>> GetByName(string productName)
         {
-            // İsteğe göre kültür-duyarlı/duyarsız filtre; StartsWith prefix için idealdir.
-            var list = await _productDal.GetAll(p => p.Name.StartsWith(productName));
+            if (string.IsNullOrWhiteSpace(productName) || productName.Trim().Length < 2)
+                return new ErrorDataResult<List<Product>>(Messages.ProductNotFound);
+
+            var list = await _productDal.SearchByNameAsync(productName, take: 50);
             return list.Any()
                 ? new SuccessDataResult<List<Product>>(list, Messages.ProductsListed)
                 : new ErrorDataResult<List<Product>>(Messages.ProductNotFound);
         }
 
-        //public async Task<IDataResult<List<Product>>> GetByUnitPrice(decimal min, decimal max)
-        //{
-        //    return new SuccessDataResult<List<Product>>(await _productDal.GetAll(p => p.UnitPrice >= min && p.UnitPrice <= max));
-        //}
 
-        //public async Task<IDataResult<List<ProductDetailDto>>> GetProductDetails()
-        //{
-        //    return new SuccessDataResult<List<ProductDetailDto>>(await _productDal.GetProductDetails());
-        //}
 
         public async Task<IResult> Update(Product product)
         {

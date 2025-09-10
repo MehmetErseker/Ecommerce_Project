@@ -8,5 +8,6 @@ namespace Entities.DTOs
         public int CategoryId { get; set; }
         public decimal UnitPrice { get; set; }
         public int UnitsInStock { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

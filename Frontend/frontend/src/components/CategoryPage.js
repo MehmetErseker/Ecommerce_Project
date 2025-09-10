@@ -13,6 +13,14 @@ function CategoryPage() {
     const [error, setError] = useState(null);
     const [user, setUser] = useState(null);
 
+    // 🔗 Home.js ile aynı: API kökü ve URL birleştirici
+    const API_BASE = "https://localhost:44359";
+    const resolveImageUrl = (imageUrl) => {
+        if (!imageUrl) return null;
+        if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) return imageUrl;
+        return `${API_BASE}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
+    };
+
     useEffect(() => {
         const fetchCategory = async () => {
             try {
@@ -176,55 +184,67 @@ function CategoryPage() {
             <div className="category-content">
                 {category.products && category.products.length > 0 ? (
                     <div className="products-grid">
-                        {category.products.map((prod) => (
-                            <div
-                                key={prod.id}
-                                className="product-card"
-                                onClick={() => handleViewProduct(prod.id)}
-                            >
-                                <div className="product-image">
-                                    <div className="product-placeholder">📦</div>
-                                    {prod.unitsInStock <= 0 && (
-                                        <div className="out-of-stock-overlay">
-                                            <span>Out of Stock</span>
+                        {category.products.map((prod) => {
+                            const imgSrc = resolveImageUrl(prod.imageUrl || prod.ImageUrl); // ✅ Home.js ile aynı
+                            return (
+                                <div
+                                    key={prod.id}
+                                    className="product-card"
+                                    onClick={() => handleViewProduct(prod.id)}
+                                >
+                                    <div className="product-image">
+                                        {imgSrc ? (
+                                            <img
+                                                src={imgSrc}
+                                                alt={prod.name}
+                                                className="product-img"
+                                                loading="lazy"
+                                            />
+                                        ) : (
+                                            <div className="product-placeholder">📦</div>
+                                        )}
+                                        {prod.unitsInStock <= 0 && (
+                                            <div className="out-of-stock-overlay">
+                                                <span>Out of Stock</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    <div className="product-info">
+                                        <h3 className="product-name">{prod.name}</h3>
+                                        <div className="product-price">
+                                            <span className="price-label">Price:</span>
+                                            <span className="price-value">{prod.unitPrice} TL</span>
                                         </div>
-                                    )}
-                                </div>
-                                <div className="product-info">
-                                    <h3 className="product-name">{prod.name}</h3>
-                                    <div className="product-price">
-                                        <span className="price-label">Price:</span>
-                                        <span className="price-value">{prod.unitPrice} TL</span>
+                                        <div className="product-stock">
+                                            <span className="stock-label">Stock:</span>
+                                            <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                                {prod.unitsInStock}
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="product-stock">
-                                        <span className="stock-label">Stock:</span>
-                                        <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                                            {prod.unitsInStock}
-                                        </span>
+                                    <div className="product-actions">
+                                        <button
+                                            className={`add-to-cart-btn ${prod.unitsInStock <= 0 ? 'disabled' : ''}`}
+                                            onClick={(e) => handleAddToCart(prod.id, e)}
+                                            disabled={prod.unitsInStock <= 0}
+                                        >
+                                            <span className="btn-icon">🛒</span>
+                                            {prod.unitsInStock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                                        </button>
+                                        <button
+                                            className="details-btn"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleViewProduct(prod.id);
+                                            }}
+                                        >
+                                            <span className="btn-icon">👁️</span>
+                                            View Details
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="product-actions">
-                                    <button
-                                        className={`add-to-cart-btn ${prod.unitsInStock <= 0 ? 'disabled' : ''}`}
-                                        onClick={(e) => handleAddToCart(prod.id, e)}
-                                        disabled={prod.unitsInStock <= 0}
-                                    >
-                                        <span className="btn-icon">🛒</span>
-                                        {prod.unitsInStock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                                    </button>
-                                    <button
-                                        className="details-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleViewProduct(prod.id);
-                                        }}
-                                    >
-                                        <span className="btn-icon">👁️</span>
-                                        View Details
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 ) : (
                     <div className="no-products">
