@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./CategoryPage.css";
+import NavigationBar from "./NavigationBar"; // ✅ Ortak navbar
 
 function CategoryPage() {
     const { id } = useParams();
@@ -118,147 +119,161 @@ function CategoryPage() {
 
     if (loading) {
         return (
-            <div className="category-container">
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading category...</p>
+            <>
+                <NavigationBar />
+                <div className="category-container">
+                    <div className="loading-container">
+                        <div className="loading-spinner"></div>
+                        <p>Loading category...</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (error) {
         return (
-            <div className="category-container">
-                <div className="error-container">
-                    <div className="error-icon">❌</div>
-                    <h2>Unable to load category</h2>
-                    <p>{error}</p>
-                    <button className="back-to-home-btn" onClick={handleBackToHome}>
-                        <span className="home-icon">🏠</span>
-                        Back to Home
-                    </button>
+            <>
+                <NavigationBar />
+                <div className="category-container">
+                    <div className="error-container">
+                        <div className="error-icon">❌</div>
+                        <h2>Unable to load category</h2>
+                        <p>{error}</p>
+                        <button className="back-to-home-btn" onClick={handleBackToHome}>
+                            <span className="home-icon">🏠</span>
+                            Back to Home
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (!category) {
         return (
-            <div className="category-container">
-                <div className="error-container">
-                    <div className="error-icon">📂</div>
-                    <h2>Category not found</h2>
-                    <p>The category you're looking for doesn't exist.</p>
-                    <button className="back-to-home-btn" onClick={handleBackToHome}>
-                        <span className="home-icon">🏠</span>
-                        Back to Home
-                    </button>
+            <>
+                <NavigationBar />
+                <div className="category-container">
+                    <div className="error-container">
+                        <div className="error-icon">📂</div>
+                        <h2>Category not found</h2>
+                        <p>The category you're looking for doesn't exist.</p>
+                        <button className="back-to-home-btn" onClick={handleBackToHome}>
+                            <span className="home-icon">🏠</span>
+                            Back to Home
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="category-container">
-            <div className="category-header">
-                <button className="back-btn" onClick={handleBackToHome}>
-                    <span className="back-icon">←</span>
-                    Back to Store
-                </button>
-                <div className="category-info">
-                    <h2>
-                        <span className="category-icon">📂</span>
-                        {category.name}
-                    </h2>
-                    <div className="product-count">
-                        {category.products && category.products.length > 0
-                            ? `${category.products.length} ${category.products.length === 1 ? 'product' : 'products'}`
-                            : "No products"
-                        }
-                    </div>
-                </div>
-                <div className="header-spacer"></div>
-            </div>
+        <>
+            {/* ✅ Ortak Navigation */}
+            <NavigationBar />
 
-            <div className="category-content">
-                {category.products && category.products.length > 0 ? (
-                    <div className="products-grid">
-                        {category.products.map((prod) => {
-                            const imgSrc = resolveImageUrl(prod.imageUrl || prod.ImageUrl); // ✅ Home.js ile aynı
-                            return (
-                                <div
-                                    key={prod.id}
-                                    className="product-card"
-                                    onClick={() => handleViewProduct(prod.id)}
-                                >
-                                    <div className="product-image">
-                                        {imgSrc ? (
-                                            <img
-                                                src={imgSrc}
-                                                alt={prod.name}
-                                                className="product-img"
-                                                loading="lazy"
-                                            />
-                                        ) : (
-                                            <div className="product-placeholder">📦</div>
-                                        )}
-                                        {prod.unitsInStock <= 0 && (
-                                            <div className="out-of-stock-overlay">
-                                                <span>Out of Stock</span>
+            <div className="category-container">
+                <div className="category-header">
+                    <button className="back-btn" onClick={handleBackToHome}>
+                        <span className="back-icon">←</span>
+                        Back to Store
+                    </button>
+                    <div className="category-info">
+                        <h2>
+                            <span className="category-icon">📂</span>
+                            {category.name}
+                        </h2>
+                        <div className="product-count">
+                            {category.products && category.products.length > 0
+                                ? `${category.products.length} ${category.products.length === 1 ? 'product' : 'products'}`
+                                : "No products"
+                            }
+                        </div>
+                    </div>
+                    <div className="header-spacer"></div>
+                </div>
+
+                <div className="category-content">
+                    {category.products && category.products.length > 0 ? (
+                        <div className="products-grid">
+                            {category.products.map((prod) => {
+                                const imgSrc = resolveImageUrl(prod.imageUrl || prod.ImageUrl); // ✅ Home.js ile aynı
+                                return (
+                                    <div
+                                        key={prod.id}
+                                        className="product-card"
+                                        onClick={() => handleViewProduct(prod.id)}
+                                    >
+                                        <div className="product-image">
+                                            {imgSrc ? (
+                                                <img
+                                                    src={imgSrc}
+                                                    alt={prod.name}
+                                                    className="product-img"
+                                                    loading="lazy"
+                                                />
+                                            ) : (
+                                                <div className="product-placeholder">📦</div>
+                                            )}
+                                            {prod.unitsInStock <= 0 && (
+                                                <div className="out-of-stock-overlay">
+                                                    <span>Out of Stock</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="product-info">
+                                            <h3 className="product-name">{prod.name}</h3>
+                                            <div className="product-price">
+                                                <span className="price-label">Price:</span>
+                                                <span className="price-value">{prod.unitPrice} TL</span>
                                             </div>
-                                        )}
-                                    </div>
-                                    <div className="product-info">
-                                        <h3 className="product-name">{prod.name}</h3>
-                                        <div className="product-price">
-                                            <span className="price-label">Price:</span>
-                                            <span className="price-value">{prod.unitPrice} TL</span>
+                                            <div className="product-stock">
+                                                <span className="stock-label">Stock:</span>
+                                                <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                                    {prod.unitsInStock}
+                                                </span>
+                                            </div>
                                         </div>
-                                        <div className="product-stock">
-                                            <span className="stock-label">Stock:</span>
-                                            <span className={`stock-value ${prod.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                                                {prod.unitsInStock}
-                                            </span>
+                                        <div className="product-actions">
+                                            <button
+                                                className={`add-to-cart-btn ${prod.unitsInStock <= 0 ? 'disabled' : ''}`}
+                                                onClick={(e) => handleAddToCart(prod.id, e)}
+                                                disabled={prod.unitsInStock <= 0}
+                                            >
+                                                <span className="btn-icon">🛒</span>
+                                                {prod.unitsInStock <= 0 ? 'Out of Stock' : 'Add to Cart'}
+                                            </button>
+                                            <button
+                                                className="details-btn"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleViewProduct(prod.id);
+                                                }}
+                                            >
+                                                <span className="btn-icon">👁️</span>
+                                                View Details
+                                            </button>
                                         </div>
                                     </div>
-                                    <div className="product-actions">
-                                        <button
-                                            className={`add-to-cart-btn ${prod.unitsInStock <= 0 ? 'disabled' : ''}`}
-                                            onClick={(e) => handleAddToCart(prod.id, e)}
-                                            disabled={prod.unitsInStock <= 0}
-                                        >
-                                            <span className="btn-icon">🛒</span>
-                                            {prod.unitsInStock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                                        </button>
-                                        <button
-                                            className="details-btn"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleViewProduct(prod.id);
-                                            }}
-                                        >
-                                            <span className="btn-icon">👁️</span>
-                                            View Details
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                ) : (
-                    <div className="no-products">
-                        <div className="no-products-icon">📋</div>
-                        <h3>No Products Found</h3>
-                        <p>This category doesn't have any products yet.</p>
-                        <button className="back-to-home-btn" onClick={handleBackToHome}>
-                            <span className="home-icon">🏠</span>
-                            Browse Other Categories
-                        </button>
-                    </div>
-                )}
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="no-products">
+                            <div className="no-products-icon">📋</div>
+                            <h3>No Products Found</h3>
+                            <p>This category doesn't have any products yet.</p>
+                            <button className="back-to-home-btn" onClick={handleBackToHome}>
+                                <span className="home-icon">🏠</span>
+                                Browse Other Categories
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

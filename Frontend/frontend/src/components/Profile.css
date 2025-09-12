@@ -277,53 +277,7 @@
         font-size: 1rem;
     }
 
-/* Edit Form */
-.edit-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-    .form-group label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        color: #666;
-        font-weight: 500;
-        font-size: 1rem;
-    }
-
-.form-icon {
-    font-size: 1.2rem;
-}
-
-.form-input {
-    padding: 0.8rem 1rem;
-    border: 2px solid rgba(198, 40, 40, 0.2);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.8);
-}
-
-    .form-input:focus {
-        outline: none;
-        border-color: #c62828;
-        background: #ffffff;
-        box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
-    }
-
-    .form-input::placeholder {
-        color: #999;
-    }
-
-/* Profile Actions */
+/* Profile Actions (edit butonları kaldırıldı) */
 .profile-actions {
     margin-bottom: 2rem;
 }
@@ -340,15 +294,6 @@
     flex-wrap: wrap;
 }
 
-.edit-actions {
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn-edit,
-.btn-save,
-.btn-cancel,
 .btn-secondary,
 .btn-logout {
     padding: 0.8rem 1.5rem;
@@ -363,49 +308,6 @@
     justify-content: center;
     gap: 0.5rem;
 }
-
-.btn-edit {
-    background: linear-gradient(135deg, #c62828, #f44336);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
-    width: 100%;
-}
-
-    .btn-edit:hover {
-        background: linear-gradient(135deg, #b71c1c, #d32f2f);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(198, 40, 40, 0.4);
-    }
-
-.btn-save {
-    background: linear-gradient(135deg, #4caf50, #66bb6a);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-    flex: 1;
-}
-
-    .btn-save:hover:not(.loading) {
-        background: linear-gradient(135deg, #388e3c, #4caf50);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
-    }
-
-    .btn-save.loading {
-        opacity: 0.8;
-        cursor: not-allowed;
-    }
-
-.btn-cancel {
-    background: transparent;
-    border: 2px solid #666;
-    color: #666;
-    flex: 1;
-}
-
-    .btn-cancel:hover {
-        background: rgba(102, 102, 102, 0.1);
-        transform: translateY(-2px);
-    }
 
 .btn-secondary {
     background: transparent;
@@ -435,15 +337,6 @@
 
 .btn-icon {
     font-size: 1.1rem;
-}
-
-.btn-spinner {
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top: 2px solid #ffffff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
 }
 
 /* Profile Features */
@@ -526,14 +419,6 @@
         flex-direction: column;
     }
 
-    .edit-actions {
-        flex-direction: column;
-    }
-
-    .btn-secondary {
-        flex: none;
-    }
-
     .profile-features {
         flex-direction: column;
         gap: 0.5rem;
@@ -572,20 +457,6 @@
         width: 80px;
         height: 80px;
         font-size: 2rem;
-    }
-
-    .form-input {
-        font-size: 0.9rem;
-        padding: 0.7rem 0.8rem;
-    }
-
-    .btn-edit,
-    .btn-save,
-    .btn-cancel,
-    .btn-secondary,
-    .btn-logout {
-        font-size: 0.9rem;
-        padding: 0.7rem 1.2rem;
     }
 
     .info-label,

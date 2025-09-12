@@ -10,7 +10,8 @@ import CategoryPage from "./components/CategoryPage";
 import Profile from "./components/Profile";
 import Cart from "./components/Cart";
 import OrderHistory from "./components/OrderHistory";
-import SearchPage from "./components/SearchPage";   
+import SearchPage from "./components/SearchPage";
+import NavigationBar from "./components/NavigationBar";
 
 function App() {
     return (
@@ -25,6 +26,7 @@ function App() {
                 <Route path="/app/cart" element={<Cart />} />
                 <Route path="/app/orderhistory" element={<OrderHistory />} />
                 <Route path="/app/search" element={<SearchPage />} />
+                <Route path="/app/*" element={<NavigationBar />} />
             </Routes>
 
             <ToastContainer

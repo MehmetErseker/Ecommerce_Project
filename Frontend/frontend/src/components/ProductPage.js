@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./ProductPage.css";
 import RecordRTC from "recordrtc";
+import NavigationBar from "./NavigationBar"; // ✅ Ortak navigation bar
 
 function ProductPage() {
     const { productId } = useParams();
@@ -331,219 +332,233 @@ function ProductPage() {
 
     if (loading) {
         return (
-            <div className="product-container">
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading product details...</p>
+            <>
+                <NavigationBar />
+                <div className="product-container">
+                    <div className="loading-container">
+                        <div className="loading-spinner"></div>
+                        <p>Loading product details...</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (error) {
         return (
-            <div className="product-container">
-                <div className="error-container">
-                    <div className="error-icon">❌</div>
-                    <h2>Unable to load product</h2>
-                    <p>{error}</p>
-                    <div className="error-actions">
-                        <button className="btn-back" onClick={handleGoBack}>
-                            <span className="back-icon">←</span>
-                            Go Back
-                        </button>
-                        <button className="btn-home" onClick={handleBackToHome}>
-                            <span className="home-icon">🏠</span>
-                            Back to Home
-                        </button>
+            <>
+                <NavigationBar />
+                <div className="product-container">
+                    <div className="error-container">
+                        <div className="error-icon">❌</div>
+                        <h2>Unable to load product</h2>
+                        <p>{error}</p>
+                        <div className="error-actions">
+                            <button className="btn-back" onClick={handleGoBack}>
+                                <span className="back-icon">←</span>
+                                Go Back
+                            </button>
+                            <button className="btn-home" onClick={handleBackToHome}>
+                                <span className="home-icon">🏠</span>
+                                Back to Home
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (!product) {
         return (
-            <div className="product-container">
-                <div className="error-container">
-                    <div className="error-icon">📦</div>
-                    <h2>Product not found</h2>
-                    <p>The product you're looking for doesn't exist.</p>
-                    <div className="error-actions">
-                        <button className="btn-back" onClick={handleGoBack}>
-                            <span className="back-icon">←</span>
-                            Go Back
-                        </button>
-                        <button className="btn-home" onClick={handleBackToHome}>
-                            <span className="home-icon">🏠</span>
-                            Back to Home
-                        </button>
+            <>
+                <NavigationBar />
+                <div className="product-container">
+                    <div className="error-container">
+                        <div className="error-icon">📦</div>
+                        <h2>Product not found</h2>
+                        <p>The product you're looking for doesn't exist.</p>
+                        <div className="error-actions">
+                            <button className="btn-back" onClick={handleGoBack}>
+                                <span className="back-icon">←</span>
+                                Go Back
+                            </button>
+                            <button className="btn-home" onClick={handleBackToHome}>
+                                <span className="home-icon">🏠</span>
+                                Back to Home
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="product-container">
-            <div className="product-header">
-                <button className="btn-back" onClick={handleGoBack}>
-                    <span className="back-icon">←</span>
-                    Go Back
-                </button>
-                <div className="breadcrumb">
-                    <button className="breadcrumb-link" onClick={handleBackToHome}>
-                        Home
+        <>
+            {/* ✅ Ortak Navigation */}
+            <NavigationBar />
+
+            <div className="product-container">
+                <div className="product-header">
+                    <button className="btn-back" onClick={handleGoBack}>
+                        <span className="back-icon">←</span>
+                        Go Back
                     </button>
-                    <span className="breadcrumb-separator">/</span>
-                    {category && (
-                        <>
-                            <button className="breadcrumb-link" onClick={handleViewCategory}>
-                                {category.name}
-                            </button>
-                            <span className="breadcrumb-separator">/</span>
-                        </>
-                    )}
-                    <span className="breadcrumb-current">{product.name}</span>
-                </div>
-                <div className="header-spacer"></div>
-            </div>
-
-            <div className="product-content">
-                <div className="product-image-section">
-                    <div className="product-image">
-                        {product.imageUrl ? (
-                            <img
-                                src={resolveImageUrl(product.imageUrl)}
-                                alt={product.name}
-                                className="product-img"
-                                loading="lazy"
-                            />
-                        ) : (
-                            <div className="product-placeholder">📦</div>
+                    <div className="breadcrumb">
+                        <button className="breadcrumb-link" onClick={handleBackToHome}>
+                            Home
+                        </button>
+                        <span className="breadcrumb-separator">/</span>
+                        {category && (
+                            <>
+                                <button className="breadcrumb-link" onClick={handleViewCategory}>
+                                    {category.name}
+                                </button>
+                                <span className="breadcrumb-separator">/</span>
+                            </>
                         )}
-                        {product.unitsInStock <= 0 && (
-                            <div className="out-of-stock-overlay">
-                                <span>Out of Stock</span>
-                            </div>
-                        )}
+                        <span className="breadcrumb-current">{product.name}</span>
                     </div>
+                    <div className="header-spacer"></div>
                 </div>
 
-                <div className="product-details-section">
-                    <div className="product-card-detail">
-                        <div className="product-title">
-                            <h1>{product.name}</h1>
-                            <div className={`availability ${product.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                                {product.unitsInStock > 0 ? '✅ In Stock' : '❌ Out of Stock'}
-                            </div>
-                        </div>
-
-                        <div className="product-info">
-                            <div className="info-row">
-                                <span className="info-label">
-                                    <span className="info-icon">💰</span>
-                                    Price:
-                                </span>
-                                <span className="info-value price">
-                                    {product.unitPrice} TL
-                                </span>
-                            </div>
-
-                            <div className="info-row">
-                                <span className="info-label">
-                                    <span className="info-icon">📦</span>
-                                    Stock:
-                                </span>
-                                <span className={`info-value stock ${product.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
-                                    {product.unitsInStock} units
-                                </span>
-                            </div>
-
-                            {category && (
-                                <div className="info-row">
-                                    <span className="info-label">
-                                        <span className="info-icon">📂</span>
-                                        Category:
-                                    </span>
-                                    <button
-                                        className="info-value category-link"
-                                        onClick={handleViewCategory}
-                                    >
-                                        {category.name}
-                                    </button>
+                <div className="product-content">
+                    <div className="product-image-section">
+                        <div className="product-image">
+                            {product.imageUrl ? (
+                                <img
+                                    src={resolveImageUrl(product.imageUrl)}
+                                    alt={product.name}
+                                    className="product-img"
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <div className="product-placeholder">📦</div>
+                            )}
+                            {product.unitsInStock <= 0 && (
+                                <div className="out-of-stock-overlay">
+                                    <span>Out of Stock</span>
                                 </div>
                             )}
-
-                            <div className="info-row">
-                                <span className="info-label">
-                                    <span className="info-icon">🔢</span>
-                                    Product ID:
-                                </span>
-                                <span className="info-value product-id">
-                                    #{product.id}
-                                </span>
-                            </div>
                         </div>
+                    </div>
 
-                        <div className="product-actions">
-                            <button
-                                className={`btn-add-to-cart ${product.unitsInStock <= 0 ? 'disabled' : ''} ${addingToCart ? 'loading' : ''}`}
-                                onClick={() => handleAddToCart()}
-                                disabled={product.unitsInStock <= 0 || addingToCart}
-                            >
-                                {addingToCart ? (
-                                    <>
-                                        <div className="btn-spinner"></div>
-                                        Adding...
-                                    </>
-                                ) : product.unitsInStock <= 0 ? (
-                                    <>
-                                        <span className="btn-icon">❌</span>
-                                        Out of Stock
-                                    </>
-                                ) : (
-                                    <>
-                                        <span className="btn-icon">🛒</span>
-                                        Add to Cart{qty > 1 ? ` (x${qty})` : ""}
-                                    </>
+                    <div className="product-details-section">
+                        <div className="product-card-detail">
+                            <div className="product-title">
+                                <h1>{product.name}</h1>
+                                <div className={`availability ${product.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                    {product.unitsInStock > 0 ? '✅ In Stock' : '❌ Out of Stock'}
+                                </div>
+                            </div>
+
+                            <div className="product-info">
+                                <div className="info-row">
+                                    <span className="info-label">
+                                        <span className="info-icon">💰</span>
+                                        Price:
+                                    </span>
+                                    <span className="info-value price">
+                                        {product.unitPrice} TL
+                                    </span>
+                                </div>
+
+                                <div className="info-row">
+                                    <span className="info-label">
+                                        <span className="info-icon">📦</span>
+                                        Stock:
+                                    </span>
+                                    <span className={`info-value stock ${product.unitsInStock > 0 ? 'in-stock' : 'out-of-stock'}`}>
+                                        {product.unitsInStock} units
+                                    </span>
+                                </div>
+
+                                {category && (
+                                    <div className="info-row">
+                                        <span className="info-label">
+                                            <span className="info-icon">📂</span>
+                                            Category:
+                                        </span>
+                                        <button
+                                            className="info-value category-link"
+                                            onClick={handleViewCategory}
+                                        >
+                                            {category.name}
+                                        </button>
+                                    </div>
                                 )}
-                            </button>
 
-                            <button
-                                className="btn-add-to-cart"
-                                onClick={voiceRecording ? () => stopVoice("manual") : startVoice}
-                                disabled={addingToCart}
-                            >
-                                {voiceRecording ? "⏹ Komutu Gönder" : "🎙 Adeti Sesle Seç / Ekle"}
-                            </button>
+                                <div className="info-row">
+                                    <span className="info-label">
+                                        <span className="info-icon">🔢</span>
+                                        Product ID:
+                                    </span>
+                                    <span className="info-value product-id">
+                                        #{product.id}
+                                    </span>
+                                </div>
+                            </div>
 
-                            {user && (
-                                <button className="btn-view-cart" onClick={handleGoToCart}>
-                                    <span className="btn-icon">👁️</span>
-                                    View Cart
+                            <div className="product-actions">
+                                <button
+                                    className={`btn-add-to-cart ${product.unitsInStock <= 0 ? 'disabled' : ''} ${addingToCart ? 'loading' : ''}`}
+                                    onClick={() => handleAddToCart()}
+                                    disabled={product.unitsInStock <= 0 || addingToCart}
+                                >
+                                    {addingToCart ? (
+                                        <>
+                                            <div className="btn-spinner"></div>
+                                            Adding...
+                                        </>
+                                    ) : product.unitsInStock <= 0 ? (
+                                        <>
+                                            <span className="btn-icon">❌</span>
+                                            Out of Stock
+                                        </>
+                                    ) : (
+                                        <>
+                                            <span className="btn-icon">🛒</span>
+                                            Add to Cart{qty > 1 ? ` (x${qty})` : ""}
+                                        </>
+                                    )}
                                 </button>
-                            )}
-                        </div>
 
-                        <div className="product-features">
-                            <div className="feature">
-                                <span className="feature-icon">🚚</span>
-                                <span>Free Shipping</span>
+                                <button
+                                    className="btn-add-to-cart"
+                                    onClick={voiceRecording ? () => stopVoice("manual") : startVoice}
+                                    disabled={addingToCart}
+                                >
+                                    {voiceRecording ? "⏹ Komutu Gönder" : "🎙 Adeti Sesle Seç / Ekle"}
+                                </button>
+
+                                {user && (
+                                    <button className="btn-view-cart" onClick={handleGoToCart}>
+                                        <span className="btn-icon">👁️</span>
+                                        View Cart
+                                    </button>
+                                )}
                             </div>
-                            <div className="feature">
-                                <span className="feature-icon">🔄</span>
-                                <span>Easy Returns</span>
-                            </div>
-                            <div className="feature">
-                                <span className="feature-icon">🔒</span>
-                                <span>Secure Payment</span>
+
+                            <div className="product-features">
+                                <div className="feature">
+                                    <span className="feature-icon">🚚</span>
+                                    <span>Free Shipping</span>
+                                </div>
+                                <div className="feature">
+                                    <span className="feature-icon">🔄</span>
+                                    <span>Easy Returns</span>
+                                </div>
+                                <div className="feature">
+                                    <span className="feature-icon">🔒</span>
+                                    <span>Secure Payment</span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 

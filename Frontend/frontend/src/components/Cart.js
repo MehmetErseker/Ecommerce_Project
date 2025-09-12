@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./Cart.css";
+import NavigationBar from "./NavigationBar"; // ✅ Ortak navbar
 
 function Cart() {
     const navigate = useNavigate();
@@ -128,133 +129,142 @@ function Cart() {
 
     if (loading) {
         return (
-            <div className="cart-container">
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p>Loading your cart...</p>
+            <>
+                <NavigationBar /> {/* ✅ Ortak Navigation */}
+                <div className="cart-container">
+                    <div className="loading-container">
+                        <div className="loading-spinner"></div>
+                        <p>Loading your cart...</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     if (!cart) {
         return (
-            <div className="cart-container">
-                <div className="error-container">
-                    <div className="error-icon">❌</div>
-                    <h2>Unable to load cart</h2>
-                    <p>Please try again later</p>
-                    <button className="continue-shopping-btn" onClick={handleContinueShopping}>
-                        Return to Store
-                    </button>
+            <>
+                <NavigationBar /> {/* ✅ Ortak Navigation */}
+                <div className="cart-container">
+                    <div className="error-container">
+                        <div className="error-icon">❌</div>
+                        <h2>Unable to load cart</h2>
+                        <p>Please try again later</p>
+                        <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+                            Return to Store
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="cart-container">
-            <div className="cart-header">
-                <button className="back-btn" onClick={handleContinueShopping}>
-                    <span className="back-icon">←</span>
-                    Continue Shopping
-                </button>
-                <h2>
-                    <span className="cart-icon">🛒</span>
-                    Your Shopping Cart
-                </h2>
-                <div className="cart-count">
-                    {cart.cartItems.length} {cart.cartItems.length === 1 ? 'item' : 'items'}
+        <>
+            <NavigationBar /> {/* ✅ Ortak Navigation */}
+            <div className="cart-container">
+                <div className="cart-header">
+                    <button className="back-btn" onClick={handleContinueShopping}>
+                        <span className="back-icon">←</span>
+                        Continue Shopping
+                    </button>
+                    <h2>
+                        <span className="cart-icon">🛒</span>
+                        Your Shopping Cart
+                    </h2>
+                    <div className="cart-count">
+                        {cart.cartItems.length} {cart.cartItems.length === 1 ? 'item' : 'items'}
+                    </div>
                 </div>
-            </div>
 
-            {cart.cartItems.length > 0 ? (
-                <div className="cart-content">
-                    <div className="cart-items">
-                        {cart.cartItems.map((item, index) => (
-                            <div key={index} className="cart-item">
-                                <div className="item-image">
-                                    <div className="product-placeholder">📦</div>
-                                </div>
-                                <div className="item-details">
-                                    <h3 className="item-name">{item.productName}</h3>
-                                    <div className="item-info">
-                                        <span className="item-price">
-                                            <span className="price-label">Unit Price:</span>
-                                            <span className="price-value">{item.unitPrice} TL</span>
-                                        </span>
-                                        <span className="item-quantity">
-                                            <span className="quantity-label">Quantity:</span>
-                                            <span className="quantity-value">{item.quantity}</span>
-                                        </span>
-                                        <span className="item-subtotal">
-                                            <span className="subtotal-label">Subtotal:</span>
-                                            <span className="subtotal-value">{(item.quantity * item.unitPrice).toFixed(2)} TL</span>
-                                        </span>
+                {cart.cartItems.length > 0 ? (
+                    <div className="cart-content">
+                        <div className="cart-items">
+                            {cart.cartItems.map((item, index) => (
+                                <div key={index} className="cart-item">
+                                    <div className="item-image">
+                                        <div className="product-placeholder">📦</div>
+                                    </div>
+                                    <div className="item-details">
+                                        <h3 className="item-name">{item.productName}</h3>
+                                        <div className="item-info">
+                                            <span className="item-price">
+                                                <span className="price-label">Unit Price:</span>
+                                                <span className="price-value">{item.unitPrice} TL</span>
+                                            </span>
+                                            <span className="item-quantity">
+                                                <span className="quantity-label">Quantity:</span>
+                                                <span className="quantity-value">{item.quantity}</span>
+                                            </span>
+                                            <span className="item-subtotal">
+                                                <span className="subtotal-label">Subtotal:</span>
+                                                <span className="subtotal-value">{(item.quantity * item.unitPrice).toFixed(2)} TL</span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="item-actions">
+                                        <button
+                                            className="remove-btn"
+                                            onClick={() => handleRemove(item.productId)}
+                                            title="Remove from cart"
+                                        >
+                                            <span className="remove-icon">🗑️</span>
+                                            Remove
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="item-actions">
-                                    <button
-                                        className="remove-btn"
-                                        onClick={() => handleRemove(item.productId)}
-                                        title="Remove from cart"
-                                    >
-                                        <span className="remove-icon">🗑️</span>
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="cart-summary">
-                        <div className="summary-content">
-                            <div className="summary-row">
-                                <span className="summary-label">Items ({cart.cartItems.length}):</span>
-                                <span className="summary-value">{cart.totalPrice.toFixed(2)} TL</span>
-                            </div>
-                            <div className="summary-row">
-                                <span className="summary-label">Shipping:</span>
-                                <span className="summary-value free">FREE</span>
-                            </div>
-                            <div className="summary-divider"></div>
-                            <div className="summary-row total">
-                                <span className="summary-label">Total:</span>
-                                <span className="summary-value">{cart.totalPrice.toFixed(2)} TL</span>
-                            </div>
+                            ))}
                         </div>
 
-                        <button
-                            className={`checkout-btn ${checkingOut ? 'loading' : ''}`}
-                            onClick={handleCheckout}
-                            disabled={checkingOut}
-                        >
-                            {checkingOut ? (
-                                <>
-                                    <div className="btn-spinner"></div>
-                                    Processing...
-                                </>
-                            ) : (
-                                <>
-                                    <span className="checkout-icon">💳</span>
-                                    Proceed to Checkout
-                                </>
-                            )}
+                        <div className="cart-summary">
+                            <div className="summary-content">
+                                <div className="summary-row">
+                                    <span className="summary-label">Items ({cart.cartItems.length}):</span>
+                                    <span className="summary-value">{cart.totalPrice.toFixed(2)} TL</span>
+                                </div>
+                                <div className="summary-row">
+                                    <span className="summary-label">Shipping:</span>
+                                    <span className="summary-value free">FREE</span>
+                                </div>
+                                <div className="summary-divider"></div>
+                                <div className="summary-row total">
+                                    <span className="summary-label">Total:</span>
+                                    <span className="summary-value">{cart.totalPrice.toFixed(2)} TL</span>
+                                </div>
+                            </div>
+
+                            <button
+                                className={`checkout-btn ${checkingOut ? 'loading' : ''}`}
+                                onClick={handleCheckout}
+                                disabled={checkingOut}
+                            >
+                                {checkingOut ? (
+                                    <>
+                                        <div className="btn-spinner"></div>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="checkout-icon">💳</span>
+                                        Proceed to Checkout
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="empty-cart">
+                        <div className="empty-cart-icon">🛒</div>
+                        <h3>Your cart is empty</h3>
+                        <p>Looks like you haven't added any items to your cart yet.</p>
+                        <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+                            <span className="shopping-icon">🛍️</span>
+                            Start Shopping
                         </button>
                     </div>
-                </div>
-            ) : (
-                <div className="empty-cart">
-                    <div className="empty-cart-icon">🛒</div>
-                    <h3>Your cart is empty</h3>
-                    <p>Looks like you haven't added any items to your cart yet.</p>
-                    <button className="continue-shopping-btn" onClick={handleContinueShopping}>
-                        <span className="shopping-icon">🛍️</span>
-                        Start Shopping
-                    </button>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+        </>
     );
 }
 

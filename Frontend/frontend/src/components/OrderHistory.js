@@ -4,6 +4,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./OrderHistory.css";
+import NavigationBar from "./NavigationBar"; // ✅ Ortak navbar
 
 function OrderHistory() {
     const navigate = useNavigate();
@@ -95,133 +96,139 @@ function OrderHistory() {
 
     if (loading) {
         return (
-            <div className="order-history-container">
-                <div className="loading-container">
-                    <div className="loading-spinner"></div>
-                    <p className="loading">Loading your order history...</p>
+            <>
+                <NavigationBar /> {/* ✅ Ortak Navigation */}
+                <div className="order-history-container">
+                    <div className="loading-container">
+                        <div className="loading-spinner"></div>
+                        <p className="loading">Loading your order history...</p>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     }
 
     return (
-        <div className="order-history-container">
-            <div className="order-header">
-                <button className="back-btn" onClick={handleContinueShopping}>
-                    <span className="back-icon">←</span>
-                    Back to Store
-                </button>
-                <h2>
-                    <span className="order-icon">📦</span>
-                    Order History
-                </h2>
-                <div className="order-count">
-                    {orders.length} {orders.length === 1 ? 'order' : 'orders'}
-                </div>
-            </div>
-
-            {orders.length === 0 ? (
-                <div className="no-orders">
-                    <div className="no-orders-icon">📋</div>
-                    <h3>No Orders Yet</h3>
-                    <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
-                    <button className="continue-shopping-btn" onClick={handleContinueShopping}>
-                        <span className="shopping-icon">🛍️</span>
-                        Start Shopping
+        <>
+            <NavigationBar /> {/* ✅ Ortak Navigation */}
+            <div className="order-history-container">
+                <div className="order-header">
+                    <button className="back-btn" onClick={handleContinueShopping}>
+                        <span className="back-icon">←</span>
+                        Back to Store
                     </button>
+                    <h2>
+                        <span className="order-icon">📦</span>
+                        Order History
+                    </h2>
+                    <div className="order-count">
+                        {orders.length} {orders.length === 1 ? 'order' : 'orders'}
+                    </div>
                 </div>
-            ) : (
-                <div className="orders-list">
-                    {orders.map((order, index) => (
-                        <div key={index} className="order-card">
-                            <div className="order-summary" onClick={() => toggleOrderExpansion(index)}>
-                                <div className="order-info">
-                                    <div className="order-date">
-                                        <span className="date-icon">📅</span>
-                                        <span className="date-text">{formatDate(order.date)}</span>
-                                    </div>
-                                    <div className="order-status">
-                                        <span className={`status-badge ${getStatusColor(order.orderStatus)}`}>
-                                            {order.orderStatus}
-                                        </span>
-                                    </div>
-                                    <div className="order-total">
-                                        <span className="total-label">Total:</span>
-                                        <span className="total-amount">{order.totalPrice.toFixed(2)} TL</span>
-                                    </div>
-                                </div>
-                                <div className="order-actions">
-                                    <div className="items-count">
-                                        {order.orderDetails.length} {order.orderDetails.length === 1 ? 'item' : 'items'}
-                                    </div>
-                                    <button className="expand-btn">
-                                        <span className={`expand-icon ${expandedOrders.has(index) ? 'expanded' : ''}`}>
-                                            ▼
-                                        </span>
-                                    </button>
-                                </div>
-                            </div>
 
-                            {expandedOrders.has(index) && (
-                                <div className="order-details">
-                                    <div className="details-header">
-                                        <h4>
-                                            <span className="details-icon">📋</span>
-                                            Order Details
-                                        </h4>
+                {orders.length === 0 ? (
+                    <div className="no-orders">
+                        <div className="no-orders-icon">📋</div>
+                        <h3>No Orders Yet</h3>
+                        <p>You haven't placed any orders yet. Start shopping to see your order history here.</p>
+                        <button className="continue-shopping-btn" onClick={handleContinueShopping}>
+                            <span className="shopping-icon">🛍️</span>
+                            Start Shopping
+                        </button>
+                    </div>
+                ) : (
+                    <div className="orders-list">
+                        {orders.map((order, index) => (
+                            <div key={index} className="order-card">
+                                <div className="order-summary" onClick={() => toggleOrderExpansion(index)}>
+                                    <div className="order-info">
+                                        <div className="order-date">
+                                            <span className="date-icon">📅</span>
+                                            <span className="date-text">{formatDate(order.date)}</span>
+                                        </div>
+                                        <div className="order-status">
+                                            <span className={`status-badge ${getStatusColor(order.orderStatus)}`}>
+                                                {order.orderStatus}
+                                            </span>
+                                        </div>
+                                        <div className="order-total">
+                                            <span className="total-label">Total:</span>
+                                            <span className="total-amount">{order.totalPrice.toFixed(2)} TL</span>
+                                        </div>
                                     </div>
-                                    <div className="order-items">
-                                        {order.orderDetails.map((detail, i) => (
-                                            <div key={i} className="order-item">
-                                                <div className="item-image">
-                                                    <div className="product-placeholder">📦</div>
-                                                </div>
-                                                <div className="item-info">
-                                                    <h5 className="item-name">
-                                                        {detail.productName || "Product name not available"}
-                                                    </h5>
-                                                    <div className="item-details">
-                                                        <span className="item-quantity">
-                                                            <span className="detail-label">Quantity:</span>
-                                                            <span className="detail-value">{detail.quantity}</span>
-                                                        </span>
-                                                        <span className="item-price">
-                                                            <span className="detail-label">Unit Price:</span>
-                                                            <span className="detail-value">{detail.price.toFixed(2)} TL</span>
-                                                        </span>
-                                                        <span className="item-subtotal">
-                                                            <span className="detail-label">Subtotal:</span>
-                                                            <span className="detail-value">
-                                                                {(detail.price * detail.quantity).toFixed(2)} TL
+                                    <div className="order-actions">
+                                        <div className="items-count">
+                                            {order.orderDetails.length} {order.orderDetails.length === 1 ? 'item' : 'items'}
+                                        </div>
+                                        <button className="expand-btn">
+                                            <span className={`expand-icon ${expandedOrders.has(index) ? 'expanded' : ''}`}>
+                                                ▼
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {expandedOrders.has(index) && (
+                                    <div className="order-details">
+                                        <div className="details-header">
+                                            <h4>
+                                                <span className="details-icon">📋</span>
+                                                Order Details
+                                            </h4>
+                                        </div>
+                                        <div className="order-items">
+                                            {order.orderDetails.map((detail, i) => (
+                                                <div key={i} className="order-item">
+                                                    <div className="item-image">
+                                                        <div className="product-placeholder">📦</div>
+                                                    </div>
+                                                    <div className="item-info">
+                                                        <h5 className="item-name">
+                                                            {detail.productName || "Product name not available"}
+                                                        </h5>
+                                                        <div className="item-details">
+                                                            <span className="item-quantity">
+                                                                <span className="detail-label">Quantity:</span>
+                                                                <span className="detail-value">{detail.quantity}</span>
                                                             </span>
-                                                        </span>
+                                                            <span className="item-price">
+                                                                <span className="detail-label">Unit Price:</span>
+                                                                <span className="detail-value">{detail.price.toFixed(2)} TL</span>
+                                                            </span>
+                                                            <span className="item-subtotal">
+                                                                <span className="detail-label">Subtotal:</span>
+                                                                <span className="detail-value">
+                                                                    {(detail.price * detail.quantity).toFixed(2)} TL
+                                                                </span>
+                                                            </span>
+                                                        </div>
                                                     </div>
                                                 </div>
+                                            ))}
+                                        </div>
+                                        <div className="order-summary-total">
+                                            <div className="summary-row">
+                                                <span className="summary-label">Items ({order.orderDetails.length}):</span>
+                                                <span className="summary-value">{order.totalPrice.toFixed(2)} TL</span>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <div className="order-summary-total">
-                                        <div className="summary-row">
-                                            <span className="summary-label">Items ({order.orderDetails.length}):</span>
-                                            <span className="summary-value">{order.totalPrice.toFixed(2)} TL</span>
-                                        </div>
-                                        <div className="summary-row">
-                                            <span className="summary-label">Shipping:</span>
-                                            <span className="summary-value free">FREE</span>
-                                        </div>
-                                        <div className="summary-divider"></div>
-                                        <div className="summary-row total">
-                                            <span className="summary-label">Order Total:</span>
-                                            <span className="summary-value">{order.totalPrice.toFixed(2)} TL</span>
+                                            <div className="summary-row">
+                                                <span className="summary-label">Shipping:</span>
+                                                <span className="summary-value free">FREE</span>
+                                            </div>
+                                            <div className="summary-divider"></div>
+                                            <div className="summary-row total">
+                                                <span className="summary-label">Order Total:</span>
+                                                <span className="summary-value">{order.totalPrice.toFixed(2)} TL</span>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </>
     );
 }
 
