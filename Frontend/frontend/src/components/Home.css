@@ -634,3 +634,160 @@
         padding: 2rem 1rem;
     }
 }
+
+/* --- Voice/Search görünürlük ve durum stilleri --- */
+.nav-search {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: 0 16px;
+}
+
+.nav-search-input {
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    width: 280px; /* istersen 320px yap */
+}
+
+.nav-search-btn {
+    padding: 8px 10px;
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    background: #ffffff; /* beyaz zemin */
+    color: #c62828; /* KIRMIZI YAZI (artık görünür) */
+    cursor: pointer;
+    font-weight: 600;
+    transition: all .2s ease;
+}
+
+    .nav-search-btn:hover {
+        background: #ffe5e7;
+        transform: translateY(-1px);
+    }
+
+    /* mikrofon butonu ek durumları */
+    .nav-search-btn.mic.recording {
+        background: #ffe5e7;
+        color: #b71c1c;
+        border-color: #ef5350;
+        animation: voice-pulse 1.1s infinite;
+    }
+
+@keyframes voice-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(239,83,80,.45);
+    }
+
+    70% {
+        box-shadow: 0 0 0 12px rgba(239,83,80,0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(239,83,80,0);
+    }
+}
+
+/* Kayıt durum etiketi (isteğe bağlı) */
+.voice-status {
+    font-size: .85rem;
+    color: #fff;
+    opacity: .9;
+}
+
+.voice-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: #ffeb3b;
+}
+
+.voice-status.on .voice-dot {
+    background: #ff5252;
+}
+
+
+/* ==== Pagination (Prev / Next) ==== */
+/*.pagination {*/
+    /* inline style’daki layout korunur; burada sadece görünüm ekliyoruz */
+    /*background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(198, 40, 40, 0.15);
+    border-radius: 999px;
+    padding: 6px;
+    box-shadow: 0 8px 24px rgba(198, 40, 40, 0.12);
+}*/
+
+/* Butonlar */
+.pager-btn {
+    appearance: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.2px;
+    color: #ffffff;
+    background: linear-gradient(135deg, #c62828 0%, #f44336 100%);
+    box-shadow: 0 6px 14px rgba(198, 40, 40, 0.22), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease, opacity 0.2s ease;
+}
+
+    .pager-btn:hover:not(:disabled) {
+        transform: translateY(-1px);
+        filter: brightness(1.05);
+        box-shadow: 0 10px 22px rgba(198, 40, 40, 0.28), inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .pager-btn:active:not(:disabled) {
+        transform: translateY(0);
+        filter: brightness(0.98);
+        box-shadow: 0 4px 10px rgba(198, 40, 40, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+    }
+
+    .pager-btn:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.25), 0 6px 14px rgba(198, 40, 40, 0.22);
+    }
+
+    /* Disabled hali (soluk, tıklanamaz) */
+    .pager-btn:disabled {
+        background: linear-gradient(135deg, #e0e0e0, #cfcfcf);
+        color: #8a8a8a;
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.85;
+    }
+
+/* Sayfa bilgisi */
+.pager-info {
+    font-weight: 700;
+    color: #b71c1c;
+    padding: 0 0.5rem;
+    user-select: none;
+}
+
+/* Küçük ekran uyumu */
+@media (max-width: 480px) {
+    .pagination {
+        padding: 4px;
+        border-radius: 16px;
+        gap: 6px;
+    }
+
+    .pager-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .pager-info {
+        font-size: 0.9rem;
+    }
+}

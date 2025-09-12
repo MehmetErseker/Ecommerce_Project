@@ -1,9 +1,10 @@
-﻿import React, { useState, useEffect } from "react";
+﻿import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { toast } from 'react-toastify';
 import "./Home.css";
+import RecordRTC from "recordrtc";
 
 function Home() {
     const navigate = useNavigate();
@@ -26,6 +27,12 @@ function Home() {
         // leading slash yoksa ekleyelim
         return `${API_BASE}${imageUrl.startsWith("/") ? "" : "/"}${imageUrl}`;
     };
+
+    // 🎙 Voice Search state/refs
+    const [voiceRecording, setVoiceRecording] = useState(false);
+    const recRef = useRef(null);
+    const streamRef = useRef(null);
+    const autoStopTimerRef = useRef(null);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -74,6 +81,13 @@ function Home() {
         fetchCategories();
         fetchProducts();
         fetchUser();
+
+        // cleanup (component unmount)
+        return () => {
+            try { if (autoStopTimerRef.current) clearTimeout(autoStopTimerRef.current); } catch { }
+            try { streamRef.current?.getTracks()?.forEach(t => t.stop()); } catch { }
+            try { recRef.current?.destroy?.(); } catch { }
+        };
     }, []);
 
     useEffect(() => {
@@ -139,6 +153,120 @@ function Home() {
         }
     };
 
+    // ---- Voice Search helpers ----
+    const extractSpokenQuery = (rawText, slots) => {
+        // 1) Python servisinden "search" intent + "product" slot geldiyse onu kullan
+        const productFromSlot = slots && (slots.product || slots.query || slots.name);
+        if (typeof productFromSlot === "string" && productFromSlot.trim().length > 0) {
+            return productFromSlot.trim();
+        }
+
+        // 2) Transcript heuristics
+        if (!rawText) return null;
+        let t = rawText.toLowerCase().replace(/[.,!?]/g, " ").replace(/\s+/g, " ").trim();
+
+        // "ara|bul|araştır <ürün>"
+        let m = t.match(/\b(?:ara|bul|araştır)\s+(.+)/i);
+        if (m && m[1]) return m[1].trim();
+
+        // "<ürün> ara|bul|araştır"
+        m = t.match(/^(.+?)\s+(?:ara|bul|araştır)\b/i);
+        if (m && m[1]) return m[1].trim();
+
+        // "<ürün> fiyatı" gibi ifadelerde de ürün adını alalım (arama sayfasına yönlendirmek için faydalı)
+        m = t.match(/^(.+?)\s+fiyat(ı|ini)?\b/i);
+        if (m && m[1]) return m[1].trim();
+
+        // stopword temizliği (temel)
+        const stop = new Set(["ara", "bul", "araştır", "fiyat", "fiyatı", "fiyatini", "sepete", "ekle", "adet", "tane"]);
+        const cleaned = t.split(" ").filter(w => w && !stop.has(w)).join(" ").trim();
+        return cleaned.length >= 2 ? cleaned : null;
+    };
+
+    const startVoiceSearch = async () => {
+        try {
+            if (voiceRecording) return;
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            streamRef.current = stream;
+
+            const rec = new RecordRTC(stream, {
+                type: "audio",
+                mimeType: "audio/wav",
+                recorderType: RecordRTC.StereoAudioRecorder,
+                desiredSampRate: 16000
+            });
+            rec.startRecording();
+            recRef.current = rec;
+            setVoiceRecording(true);
+
+            // 3.3 sn sonra otomatik durdur
+            autoStopTimerRef.current = setTimeout(() => {
+                stopVoiceSearch("auto").catch(() => { });
+            }, 3300);
+        } catch (e) {
+            console.error(e);
+            toast.error("Mikrofon izni gerekli veya kayıt başlatılamadı.");
+        }
+    };
+
+    const stopVoiceSearch = async (reason = "manual") => {
+        try {
+            if (autoStopTimerRef.current) {
+                clearTimeout(autoStopTimerRef.current);
+                autoStopTimerRef.current = null;
+            }
+            const rec = recRef.current;
+            if (!rec) return;
+
+            // stopRecording'i Promise ile bekle
+            const blob = await new Promise((resolve) => {
+                try {
+                    rec.stopRecording(() => {
+                        try { resolve(rec.getBlob()); } catch { resolve(null); }
+                    });
+                } catch { resolve(null); }
+            });
+
+            // kaynakları kapat
+            try { streamRef.current?.getTracks()?.forEach(t => t.stop()); } catch { }
+            try { rec.destroy(); } catch { }
+            recRef.current = null;
+            streamRef.current = null;
+
+            if (!(blob instanceof Blob)) {
+                toast.error("Ses kaydı alınamadı, tekrar dener misin?");
+                setVoiceRecording(false);
+                return;
+            }
+
+            const file = new File([blob], "input.wav", { type: blob.type || "audio/wav" });
+            const form = new FormData();
+            form.append("Audio", file); // backend DTO'da "Audio"; (case-insensitive)
+
+            // Python VoiceService → /api/voice/interpret (proxy)
+            const resp = await axios.post("https://localhost:44359/api/voice/interpret", form);
+            const data = resp.data || {};
+            const transcript = (data.transcript || "").toLowerCase();
+
+            const q = extractSpokenQuery(transcript, data.slots || {});
+            if (q && q.trim()) {
+                setSearchTerm(q);
+                navigate(`/app/search?q=${encodeURIComponent(q)}`);
+                toast.success(`Arandı: ${q}`);
+            } else {
+                toast.info(
+                    `Komut anlaşılamadı${data.transcript ? `: "${data.transcript}"` : ""}. ` +
+                    `Örn: "iphone 15 ara", "kulaklık bul"`
+                );
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("Sesli arama sırasında bir hata oluştu.");
+        } finally {
+            setVoiceRecording(false);
+        }
+    };
+
     const totalItems = products.length;
     const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
     const safePage = Math.min(Math.max(currentPage, 1), totalPages);
@@ -174,6 +302,14 @@ function Home() {
                     />
                     <button className="nav-search-btn" onClick={handleSearch}>
                         🔎
+                    </button>
+                    {/* 🎙 Voice search button */}
+                    <button
+                        className="nav-search-btn"
+                        onClick={voiceRecording ? () => stopVoiceSearch("manual") : startVoiceSearch}
+                        title="Voice Search"
+                    >
+                        {voiceRecording ? "⏹" : "🎙"}
                     </button>
                 </div>
 
